@@ -1,0 +1,3000 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="WearVibes — Modern Indian luxury. Contemporary sarees, lehengas, suits, dresses, kurtis and co-ord sets.">
+  <meta name="theme-color" content="#17130f">
+  <meta name="robots" content="index,follow">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="WearVibes — Modern Indian Luxury">
+  <meta property="og:description" content="Explore expressive Indian occasionwear, contemporary silhouettes and virtual try-on.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1200&q=85">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <title>WearVibes — Modern Indian Luxury</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <style>
+    :root{
+      --bg:#f5f0e8;
+      --paper:#fbf8f2;
+      --surface:#eee7dc;
+      --ink:#17130f;
+      --muted:#766e65;
+      --line:rgba(23,19,15,.13);
+      --line-strong:rgba(23,19,15,.24);
+      --accent:#a96f4e;
+      --accent-dark:#835239;
+      --dark:#17130f;
+      --white:#fff;
+      --success:#55745c;
+      --danger:#a44e45;
+      --serif:"Playfair Display", Georgia, serif;
+      --sans:"DM Sans", Arial, sans-serif;
+      --ease:cubic-bezier(.22,.61,.36,1);
+      --ease-heavy:cubic-bezier(.77,0,.18,1);
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      background:var(--bg); color:var(--ink); font-family:var(--sans);
+      overflow-x:hidden; -webkit-font-smoothing:antialiased;
+    }
+    body.locked{overflow:hidden}
+    button,input,select,textarea{font:inherit}
+    button{border:0;background:none;color:inherit;cursor:pointer}
+    a{color:inherit;text-decoration:none}
+    img{display:block;width:100%}
+    ul{list-style:none}
+    ::selection{background:var(--ink);color:#fff}
+    :focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+    .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+    /* Loader */
+    .loader{
+      position:fixed;inset:0;z-index:9999;background:var(--ink);color:#fff;
+      display:grid;place-items:center;transition:opacity .65s ease,visibility .65s ease;
+    }
+    .loader.hidden{opacity:0;visibility:hidden;pointer-events:none}
+    .loader-inner{text-align:center}
+    .loader-logo{font:500 clamp(70px,12vw,170px)/.8 var(--serif);letter-spacing:-.09em}
+    .loader-sub{margin-top:24px;font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.48)}
+    .loader-line{width:180px;height:1px;background:rgba(255,255,255,.16);margin:28px auto 0}
+    .loader-line span{display:block;width:0;height:100%;background:#fff}
+
+    /* Announcement + header */
+    .announcement{
+      position:fixed;top:0;left:0;right:0;z-index:1100;height:32px;
+      display:flex;align-items:center;justify-content:center;
+      background:var(--ink);color:#fff;font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+    }
+    .header{
+      position:fixed;top:32px;left:0;right:0;z-index:1000;height:76px;
+      padding:0 4vw;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+      color:#fff;transition:background .35s ease,color .35s ease,backdrop-filter .35s ease;
+    }
+    .header.scrolled{
+      background:rgba(245,240,232,.9);color:var(--ink);backdrop-filter:blur(18px);
+      border-bottom:1px solid var(--line);
+    }
+    .logo{font:500 34px/1 var(--serif);letter-spacing:-.09em;justify-self:start}
+    .nav{display:flex;gap:30px;align-items:center;font-size:10px;text-transform:uppercase;letter-spacing:.16em}
+    .nav a{position:relative;padding:8px 0}
+    .nav a:after{content:"";position:absolute;left:0;right:100%;bottom:1px;height:1px;background:currentColor;transition:right .3s var(--ease)}
+    .nav a:hover:after{right:0}
+    .header-actions{justify-self:end;display:flex;gap:8px}
+    .icon-btn{
+      width:40px;height:40px;border:1px solid currentColor;border-radius:50%;
+      display:grid;place-items:center;position:relative;font-size:14px;transition:.3s var(--ease)
+    }
+    .icon-btn:hover{background:currentColor;color:var(--ink)}
+    .cart-count{
+      position:absolute;right:-4px;top:-4px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;
+      background:var(--accent);color:#fff;font-size:8px;display:grid;place-items:center;font-weight:700;
+    }
+    .mobile-menu-btn{display:none}
+
+    /* Mobile nav */
+    .mobile-nav{
+      position:fixed;inset:0;z-index:1900;background:var(--ink);color:#fff;
+      display:flex;flex-direction:column;justify-content:center;padding:10vw;
+      transform:translateY(-100%);transition:transform .65s var(--ease-heavy)
+    }
+    .mobile-nav.active{transform:translateY(0)}
+    .mobile-nav a{font:400 clamp(42px,11vw,72px)/1 var(--serif);padding:18px 0;border-bottom:1px solid rgba(255,255,255,.12)}
+    .mobile-nav-close{position:absolute;right:24px;top:52px;width:42px;height:42px;border:1px solid rgba(255,255,255,.4);border-radius:50%}
+
+    /* Hero */
+    .hero{height:100svh;min-height:720px;position:relative;overflow:hidden;background:var(--dark);color:#fff}
+    .hero-bg{
+      position:absolute;inset:0;
+      background:
+        linear-gradient(90deg,rgba(0,0,0,.58) 0%,rgba(0,0,0,.2) 52%,rgba(0,0,0,.32) 100%),
+        linear-gradient(180deg,rgba(0,0,0,.08) 45%,rgba(0,0,0,.68) 100%),
+        url("https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=2400&q=92") center/cover;
+      transform:scale(1.08);
+      will-change:transform;
+    }
+    .hero-grain{position:absolute;inset:0;opacity:.09;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E")}
+    .hero-content{position:absolute;left:5vw;right:5vw;bottom:11vh;z-index:2;display:flex;justify-content:space-between;align-items:end;gap:40px}
+    .hero-kicker{font-size:10px;letter-spacing:.3em;text-transform:uppercase;margin-bottom:24px;color:rgba(255,255,255,.76)}
+    .hero-title{font:400 clamp(76px,12vw,185px)/.77 var(--serif);letter-spacing:-.085em;max-width:1000px}
+    .hero-title span{display:block;overflow:hidden;padding-bottom:.08em}
+    .hero-title i{font-style:normal;display:inline-block}
+    .hero-description{max-width:330px;font-size:12px;line-height:1.8;color:rgba(255,255,255,.72)}
+    .hero-cta,.banner-cta{
+      display:inline-flex;align-items:center;justify-content:center;gap:14px;
+      margin-top:22px;padding:16px 25px;background:#fff;color:var(--ink);
+      font-size:9px;text-transform:uppercase;letter-spacing:.18em;transition:.35s var(--ease)
+    }
+    .hero-cta:hover,.banner-cta:hover{background:var(--accent);color:#fff;transform:translateY(-2px)}
+    .hero-scroll{position:absolute;left:5vw;bottom:28px;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+    .hero-scroll:after{content:"";display:inline-block;width:70px;height:1px;background:rgba(255,255,255,.4);margin-left:12px;vertical-align:middle}
+
+    /* Marquee */
+    .marquee{overflow:hidden;background:var(--ink);color:#fff;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+    .marquee-track{display:inline-flex;animation:marquee 28s linear infinite;white-space:nowrap}
+    .marquee span{font:400 21px/1 var(--serif);margin:0 32px}
+    .marquee span:after{content:"✦";font:10px var(--sans);margin-left:64px;opacity:.45}
+    @keyframes marquee{to{transform:translateX(-50%)}}
+
+    /* Editorial intro */
+    .intro{padding:160px 7vw 150px;display:grid;grid-template-columns:1.15fr .85fr;gap:10vw}
+    .eyebrow{font-size:9px;text-transform:uppercase;letter-spacing:.25em;color:var(--muted)}
+    .intro h2,.section-title{font:400 clamp(48px,7vw,100px)/.9 var(--serif);letter-spacing:-.065em;margin-top:24px}
+    .intro-copy{align-self:end;max-width:450px;color:#625b53;font-size:13px;line-height:1.95}
+    .intro-copy strong{display:block;color:var(--ink);font:400 25px/1.25 var(--serif);margin-bottom:20px}
+
+    /* Categories */
+    .categories{padding:0 3vw 150px}
+    .section-head{display:flex;justify-content:space-between;align-items:end;gap:30px;padding:0 4vw;margin-bottom:48px}
+    .section-note{max-width:260px;color:var(--muted);font-size:11px;line-height:1.7}
+    .category-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .category-card{height:560px;position:relative;overflow:hidden;background:#d9d0c4}
+    .category-card:nth-child(2),.category-card:nth-child(4){margin-top:85px}
+    .category-card:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.7));pointer-events:none}
+    .category-card img{height:100%;object-fit:cover;transition:transform 1.1s var(--ease);filter:saturate(.88)}
+    .category-card:hover img{transform:scale(1.08)}
+    .category-overlay{position:absolute;inset:auto 0 0;padding:30px;color:#fff;z-index:1}
+    .category-name{font:400 39px/1 var(--serif);letter-spacing:-.04em}
+    .category-small{font-size:8px;text-transform:uppercase;letter-spacing:.2em;opacity:.68;margin-top:9px}
+    .category-arrow{display:inline-block;margin-top:18px;font-size:9px;letter-spacing:.14em;text-transform:uppercase;opacity:.8}
+
+    /* Product collection */
+    .products{padding:80px 4vw 160px;background:var(--paper)}
+    .products .section-head{padding:0 0 0 0}
+    .filter-wrap{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:48px}
+    .filter-bar{display:flex;gap:7px;flex-wrap:wrap}
+    .filter-chip{padding:10px 16px;border:1px solid var(--line);font-size:9px;text-transform:uppercase;letter-spacing:.12em;transition:.25s var(--ease)}
+    .filter-chip.active,.filter-chip:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+    .collection-count{font-size:9px;text-transform:uppercase;letter-spacing:.16em;color:var(--muted)}
+    .product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:72px 18px}
+    .product{position:relative;min-width:0}
+    .product-image{aspect-ratio:4/5;overflow:hidden;position:relative;background:var(--surface);cursor:pointer}
+    .product-image:after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 1px rgba(0,0,0,.04);pointer-events:none}
+    .product-image img{height:100%;object-fit:cover;transition:transform .95s var(--ease),filter .5s ease}
+    .product:hover .product-image img{transform:scale(1.055);filter:saturate(.92)}
+    .product-badge{position:absolute;left:13px;top:13px;z-index:2;background:var(--ink);color:#fff;padding:7px 10px;font-size:8px;text-transform:uppercase;letter-spacing:.14em}
+    .product-heart{position:absolute;right:13px;top:13px;z-index:3;width:39px;height:39px;border-radius:50%;background:rgba(255,255,255,.9);display:grid;place-items:center;font-size:17px;transition:.25s var(--ease)}
+    .product-heart:hover,.product-heart.active{color:var(--accent);transform:scale(1.06)}
+    .product-quickview{
+      position:absolute;left:13px;right:13px;bottom:13px;z-index:2;padding:13px;
+      background:rgba(255,255,255,.94);color:var(--ink);font-size:8px;text-align:center;
+      text-transform:uppercase;letter-spacing:.17em;opacity:0;transform:translateY(10px);transition:.3s var(--ease)
+    }
+    .product:hover .product-quickview{opacity:1;transform:translateY(0)}
+    .product-meta{display:flex;justify-content:space-between;gap:18px;padding:18px 2px 0}
+    .product-name{font-size:12px;line-height:1.35}
+    .product-category{font-size:8px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-top:7px}
+    .product-price{font-size:12px;white-space:nowrap}
+    .product-price .strike{font-size:10px;color:var(--muted);text-decoration:line-through;margin-right:6px}
+    .product-actions{display:flex;gap:8px;margin-top:14px}
+    .add-btn{flex:1;background:var(--ink);color:#fff;padding:13px;font-size:8px;text-transform:uppercase;letter-spacing:.15em;transition:.3s var(--ease)}
+    .add-btn:hover{background:var(--accent);transform:translateY(-1px)}
+    .quick-btn{border:1px solid var(--line-strong);padding:12px 16px;font-size:8px;text-transform:uppercase;letter-spacing:.13em;transition:.25s var(--ease)}
+    .quick-btn:hover{background:var(--ink);color:#fff}
+    .load-more-wrap{display:flex;justify-content:center;margin-top:65px}
+    .no-results{padding:90px 20px;text-align:center;color:var(--muted);font-size:12px;display:none}
+    .no-results.active{display:block}
+
+    /* Craft editorial */
+    .reveal-section{padding:150px 3vw;background:var(--ink);color:#fff;overflow:hidden}
+    .reveal-intro{padding:0 4vw 75px;display:flex;justify-content:space-between;gap:30px;align-items:end}
+    .reveal-intro h2{font:400 clamp(52px,8vw,125px)/.86 var(--serif);letter-spacing:-.075em;max-width:850px;margin-top:24px}
+    .reveal-copy{max-width:270px;font-size:11px;line-height:1.8;color:rgba(255,255,255,.5)}
+    .reveal-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}
+    .reveal-item{height:450px;overflow:hidden}
+    .reveal-item:nth-child(even){margin-top:95px}
+    .reveal-item img{height:100%;object-fit:cover;transform:scale(1.12);filter:saturate(.8)}
+
+    /* Banner */
+    .banner{min-height:82vh;position:relative;display:grid;place-items:center;overflow:hidden;color:#fff;text-align:center}
+    .banner:after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(0,0,0,.34),rgba(0,0,0,.6))}
+    .banner img{position:absolute;inset:0;height:100%;object-fit:cover;filter:saturate(.82)}
+    .banner-content{position:relative;z-index:2;padding:20px}
+    .banner-content p{font-size:9px;text-transform:uppercase;letter-spacing:.3em;margin-bottom:24px}
+    .banner-content h2{font:400 clamp(62px,10vw,155px)/.82 var(--serif);letter-spacing:-.08em}
+    .banner-cta{background:transparent;border:1px solid rgba(255,255,255,.65);color:#fff;margin-top:38px}
+    .banner-cta:hover{background:#fff;color:var(--ink)}
+
+    /* Services */
+    .services{padding:110px 5vw;background:var(--bg)}
+    .service-grid{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line)}
+    .service{padding:45px 26px 20px;border-right:1px solid var(--line)}
+    .service:last-child{border-right:0}
+    .service-number{font-size:8px;color:var(--muted);letter-spacing:.15em}
+    .service h3{font:400 27px/1 var(--serif);margin:50px 0 14px}
+    .service p{color:var(--muted);font-size:11px;line-height:1.8}
+
+    /* Newsletter */
+    .newsletter{padding:125px 5vw;background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line);text-align:center}
+    .newsletter h2{font:400 clamp(38px,5vw,66px)/.95 var(--serif);letter-spacing:-.055em;max-width:680px;margin:22px auto 15px}
+    .newsletter p{color:var(--muted);font-size:11px;margin-bottom:36px}
+    .newsletter-form{display:flex;max-width:460px;margin:auto;border-bottom:1px solid var(--ink);padding-bottom:11px;gap:12px}
+    .newsletter-form input{flex:1;border:0;background:transparent;outline:none;font-size:13px}
+    .newsletter-form button{font-size:8px;text-transform:uppercase;letter-spacing:.15em}
+    .newsletter-form button:hover{color:var(--accent)}
+
+    /* Footer */
+    footer{background:var(--ink);color:#fff;padding:105px 5vw 30px}
+    .footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:55px}
+    .footer-logo{font:400 105px/.7 var(--serif);letter-spacing:-.09em}
+    .footer-blurb{color:#918a82;font-size:11px;line-height:1.85;max-width:330px;margin-top:25px}
+    .footer-social{display:flex;gap:8px;margin-top:28px}
+    .footer-social a{width:37px;height:37px;border:1px solid rgba(255,255,255,.24);border-radius:50%;display:grid;place-items:center;font-size:9px;transition:.25s}
+    .footer-social a:hover{background:#fff;color:var(--ink)}
+    .footer-col h4{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:#6f6963;margin-bottom:21px}
+    .footer-col a,.footer-col button{display:block;font-size:11px;color:#ddd;margin:12px 0;text-align:left}
+    .footer-col a:hover,.footer-col button:hover{color:#fff}
+    .footer-bottom{border-top:1px solid rgba(255,255,255,.14);margin-top:100px;padding-top:20px;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;color:#6f6963;font-size:8px;letter-spacing:.06em}
+
+    /* Drawer */
+    .drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.48);z-index:1998;opacity:0;pointer-events:none;transition:.4s}
+    .drawer-overlay.active{opacity:1;pointer-events:auto}
+    .cart-drawer{
+      position:fixed;right:0;top:0;width:min(510px,100%);height:100%;background:var(--paper);z-index:1999;
+      transform:translateX(100%);transition:transform .65s var(--ease-heavy);display:flex;flex-direction:column
+    }
+    .cart-drawer.active{transform:translateX(0)}
+    .drawer-head{padding:26px 28px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+    .drawer-head h3{font:400 30px/1 var(--serif)}
+    .close-btn,.modal-close{width:39px;height:39px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;transition:.25s}
+    .close-btn:hover,.modal-close:hover{background:var(--ink);color:#fff}
+    .cart-items{flex:1;overflow:auto;padding:10px 28px}
+    .empty-cart{height:100%;display:flex;flex-direction:column;gap:15px;align-items:center;justify-content:center;text-align:center;color:var(--muted);font-size:12px}
+    .empty-bag{width:70px;height:70px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;font:28px var(--serif);color:var(--ink)}
+    .cart-item{display:grid;grid-template-columns:82px 1fr auto;gap:15px;padding:20px 0;border-bottom:1px solid var(--line)}
+    .cart-item-img{width:82px;height:104px;object-fit:cover}
+    .cart-item h4{font-size:12px;font-weight:500}
+    .cart-item p{font-size:10px;color:var(--muted);margin-top:6px}
+    .qty{display:flex;align-items:center;gap:9px;margin-top:15px}
+    .qty button,.modal-qty button{width:25px;height:25px;border:1px solid var(--line)}
+    .qty button:hover,.modal-qty button:hover{background:var(--ink);color:#fff}
+    .qty span{font-size:11px;min-width:14px;text-align:center}
+    .item-price-col{text-align:right;display:flex;flex-direction:column;align-items:flex-end;justify-content:space-between}
+    .item-price-col strong{font-size:12px}
+    .remove{font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--danger)}
+    .cart-footer{padding:25px 28px;border-top:1px solid var(--line)}
+    .total-line{display:flex;justify-content:space-between;font-size:11px;margin-bottom:10px}
+    .total-line.grand{font-size:14px;font-weight:600;border-top:1px solid var(--line);padding-top:15px;margin-top:15px}
+    .checkout-btn,.place-order-btn,.modal-add-btn,.auth-submit{
+      width:100%;background:var(--ink);color:#fff;padding:17px;text-transform:uppercase;
+      letter-spacing:.15em;font-size:8px;transition:.3s var(--ease)
+    }
+    .checkout-btn{margin-top:15px}
+    .checkout-btn:hover,.place-order-btn:hover,.modal-add-btn:hover,.auth-submit:hover{background:var(--accent)}
+    .checkout-btn:disabled,.place-order-btn:disabled{opacity:.4;cursor:not-allowed}
+
+    /* Modals */
+    .modal{position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.67);display:none;align-items:center;justify-content:center;padding:20px}
+    .modal.active{display:flex}
+    .modal-card{width:min(930px,100%);max-height:92vh;overflow:auto;background:var(--paper);padding:38px;position:relative}
+    .modal-card.narrow{width:min(470px,100%)}
+    .modal-close{position:absolute;right:20px;top:20px;z-index:4}
+    .modal-title{font:400 52px/1 var(--serif);letter-spacing:-.055em;margin-bottom:32px}
+    .product-modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+    .product-modal-grid img{aspect-ratio:4/5;object-fit:cover}
+    .modal-details{padding:10px 8px}
+    .modal-details h3{font:400 38px/1.02 var(--serif);letter-spacing:-.04em}
+    .modal-category{font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted);margin-top:10px}
+    .modal-price{font-size:18px;margin:18px 0 26px}
+    .modal-description{color:var(--muted);font-size:12px;line-height:1.8;margin-bottom:28px}
+    .field-label{font-size:8px;text-transform:uppercase;letter-spacing:.17em;color:var(--muted);margin-bottom:10px}
+    .size-list{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 26px}
+    .size{width:43px;height:43px;border:1px solid var(--line)}
+    .size.selected,.size:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+    .modal-qty{display:flex;align-items:center;gap:14px;margin-bottom:26px}
+    .modal-note{font-size:10px;color:var(--muted);line-height:1.6;margin-top:14px}
+    .search-input-row{display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--ink);padding-bottom:14px;margin-bottom:30px}
+    .search-input-row input{flex:1;border:0;background:transparent;font:400 24px var(--serif);outline:none}
+    .search-results{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+    .search-result{cursor:pointer}
+    .search-result img{aspect-ratio:4/5;object-fit:cover;margin-bottom:10px}
+    .search-result h4{font-size:11px}
+    .search-result p{font-size:9px;color:var(--muted);margin-top:5px}
+    .search-empty,.orders-empty{text-align:center;color:var(--muted);font-size:12px;padding:65px 0}
+    .search-suggestions{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+    .search-suggestions button{padding:8px 13px;border:1px solid var(--line);font-size:9px}
+    .search-suggestions button:hover{background:var(--ink);color:#fff}
+    .auth-tabs{display:flex;gap:22px;border-bottom:1px solid var(--line);margin-bottom:25px}
+    .auth-tab{padding:12px 0;border-bottom:2px solid transparent;font-size:11px;text-transform:uppercase;letter-spacing:.1em}
+    .auth-tab.active{border-color:var(--ink)}
+    .auth-switch{text-align:center;font-size:10px;color:var(--muted);margin-top:18px}
+    .auth-switch button{text-decoration:underline;color:var(--ink)}
+    .account-greeting{font:400 34px var(--serif);margin-bottom:6px}
+    .account-email{font-size:11px;color:var(--muted);margin-bottom:28px}
+    .account-links{display:flex;flex-direction:column}
+    .account-links button{display:flex;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--line);font-size:12px}
+    .account-links button:hover{color:var(--accent)}
+    .logout-btn{margin-top:24px;color:var(--danger);font-size:8px;text-transform:uppercase;letter-spacing:.1em}
+    .order-card{border:1px solid var(--line);padding:20px;margin-bottom:12px}
+    .order-top{display:flex;justify-content:space-between;gap:12px}
+    .order-id{font-size:12px;font-weight:600}.order-date{font-size:9px;color:var(--muted);margin-top:4px}
+    .status{font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--success)}
+    .order-items-preview{font-size:10px;color:var(--muted);line-height:1.6;margin:12px 0}
+    .order-total{font-size:11px;font-weight:600}
+    .track{margin-top:34px}.track-line{height:1px;background:#d9d3ca;margin:28px 0;position:relative}.track-progress{height:100%;background:var(--ink);transition:.5s}
+    .track-points{display:flex;justify-content:space-between;margin-top:-36px}
+    .track-point{text-align:center;font-size:8px;color:var(--muted);max-width:70px}
+    .point{width:14px;height:14px;background:#ddd;border-radius:50%;margin:auto auto 8px}.point.done{background:var(--ink)}
+    .checkout-layout{display:grid;grid-template-columns:1.3fr .7fr;gap:45px}
+    .checkout-section-title{font-size:8px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted);margin:30px 0 16px}
+    .checkout-section-title:first-child{margin-top:0}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .form-group{margin-bottom:16px}.form-group label{display:block;font-size:8px;text-transform:uppercase;letter-spacing:.13em;color:var(--muted);margin-bottom:8px}
+    .form-group input,.form-group select,.form-group textarea{width:100%;border:1px solid var(--line);background:transparent;padding:13px;outline:none;font-size:12px}
+    .form-group textarea{min-height:90px;resize:vertical}.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--ink)}
+    .form-error{font-size:9px;color:var(--danger);margin-top:6px;display:none}.form-group.invalid input,.form-group.invalid select,.form-group.invalid textarea{border-color:var(--danger)}.form-group.invalid .form-error{display:block}
+    .payment-options{display:grid;gap:8px}.payment-option{border:1px solid var(--line);padding:14px;cursor:pointer;font-size:11px}.payment-option:has(input:checked){border-color:var(--ink);background:rgba(23,19,15,.03)}
+    .order-summary{background:#fff;border:1px solid var(--line);padding:24px;align-self:start;position:sticky;top:15px}
+    .order-summary h4{font:400 23px var(--serif);margin-bottom:17px}.summary-item{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:10px}.summary-item span:first-child{color:var(--muted)}
+    .confirm-wrap{text-align:center;padding:45px 15px}.confirm-icon{width:72px;height:72px;border-radius:50%;background:var(--success);color:#fff;display:grid;place-items:center;font-size:28px;margin:0 auto 24px}.confirm-wrap h3{font:400 35px var(--serif);margin-bottom:10px}.confirm-wrap p{color:var(--muted);font-size:11px;margin-bottom:6px}.confirm-actions{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:28px}.confirm-actions button{padding:14px 22px;font-size:8px;text-transform:uppercase;letter-spacing:.12em}.confirm-actions .primary{background:var(--ink);color:#fff}.confirm-actions .secondary{border:1px solid var(--line)}
+
+    /* Toast + top */
+    .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,110px);z-index:5000;background:var(--ink);color:#fff;padding:13px 20px;font-size:10px;display:flex;gap:10px;transition:.45s var(--ease);pointer-events:none;max-width:90vw}
+    .toast.show{transform:translate(-50%,0)}
+    .scroll-top{position:fixed;right:22px;bottom:22px;width:45px;height:45px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;z-index:900;opacity:0;pointer-events:none;transform:translateY(10px);transition:.3s var(--ease)}
+    .scroll-top.show{opacity:1;pointer-events:auto;transform:translateY(0)}
+    .scroll-top:hover{background:var(--accent)}
+
+
+    /* WearVibes V2.1 policy, tracking and social polish */
+    .social-icon svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .social-icon:nth-child(2) svg,.social-icon:nth-child(3) svg{fill:currentColor;stroke:none}
+    .policy-card{width:min(850px,100%)}
+    .policy-hero{padding:8px 0 30px;border-bottom:1px solid var(--line);margin-bottom:30px}
+    .policy-eyebrow{font-size:8px;text-transform:uppercase;letter-spacing:.22em;color:var(--muted);margin-bottom:12px}
+    .policy-hero h2{font:400 clamp(42px,6vw,70px)/.9 var(--serif);letter-spacing:-.06em}
+    .policy-lead{font-size:12px;line-height:1.85;color:var(--muted);max-width:670px;margin-top:16px}
+    .policy-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line)}
+    .policy-block{background:var(--paper);padding:25px}
+    .policy-block h3{font:400 24px var(--serif);margin-bottom:9px}
+    .policy-block p,.policy-block li{font-size:11px;line-height:1.8;color:var(--muted)}
+    .policy-block ul{list-style:none}.policy-block li{position:relative;padding-left:15px;margin:5px 0}.policy-block li:before{content:"—";position:absolute;left:0;color:var(--ink)}
+    .policy-foot{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);font-size:10px;color:var(--muted);line-height:1.7}
+    .modal-lead{font-size:11px;line-height:1.7;color:var(--muted);margin:-18px 0 25px}
+    .tracking-form{display:grid;gap:10px}
+    .tracking-form input{width:100%;border:1px solid var(--line);background:transparent;padding:15px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;outline:none}
+    .tracking-form input:focus{border-color:var(--ink)}
+    .tracking-help{font-size:9px;color:var(--muted);line-height:1.6;margin-top:18px;text-align:center}
+    .tracking-result{margin-top:30px}
+    .tracking-result-card{border:1px solid var(--line);padding:22px;background:#fff}
+    .tracking-result-top{display:flex;justify-content:space-between;gap:20px;align-items:start}
+    .tracking-result-id{font-size:12px;font-weight:600}.tracking-result-date{font-size:9px;color:var(--muted);margin-top:5px}
+    .tracking-status{font-size:8px;text-transform:uppercase;letter-spacing:.13em;padding:7px 9px;background:rgba(85,116,92,.1);color:var(--success)}
+    .tracking-progress{height:3px;background:#e1dbd2;margin:28px 0 18px}.tracking-progress span{display:block;height:100%;background:var(--ink)}
+    .tracking-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+    .tracking-step{text-align:center;font-size:8px;color:var(--muted)}.tracking-step .dot{width:10px;height:10px;border-radius:50%;background:#ddd;margin:0 auto 7px}.tracking-step.done{color:var(--ink)}.tracking-step.done .dot{background:var(--ink)}
+    .tracking-items{font-size:10px;line-height:1.7;color:var(--muted);margin-top:18px;padding-top:15px;border-top:1px solid var(--line)}
+    .tracking-error{padding:18px;border:1px solid rgba(164,78,69,.25);background:rgba(164,78,69,.04);font-size:10px;color:var(--danger);line-height:1.7}
+    .size-table-wrap{overflow:auto;margin-top:18px;border:1px solid var(--line)}
+    .size-table{width:100%;border-collapse:collapse;min-width:550px;font-size:10px}
+    .size-table th,.size-table td{padding:13px 12px;text-align:left;border-bottom:1px solid var(--line)}
+    .size-table th{font-size:8px;text-transform:uppercase;letter-spacing:.13em;background:#f2ece3}
+    .size-table tr:last-child td{border-bottom:0}
+    .measure-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+    .measure-card{padding:17px;border:1px solid var(--line);background:#fff}.measure-card strong{display:block;font:400 19px var(--serif);margin-bottom:7px}.measure-card span{font-size:9px;color:var(--muted);line-height:1.55}
+    .policy-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:25px}.policy-links button{padding:11px 15px;border:1px solid var(--line);font-size:8px;text-transform:uppercase;letter-spacing:.12em}.policy-links button:hover{background:var(--ink);color:#fff}
+    @media(max-width:650px){
+      .policy-grid{grid-template-columns:1fr}.measure-grid{grid-template-columns:1fr}.policy-block{padding:20px}
+      .tracking-steps{font-size:7px}.tracking-result-top{flex-direction:column}
+    }
+
+    /* Responsive */
+    @media(max-width:1050px){
+      .nav{gap:18px}.category-grid{grid-template-columns:1fr 1fr}.category-card{height:500px}.category-card:nth-child(2),.category-card:nth-child(4){margin-top:0}
+      .reveal-grid{grid-template-columns:repeat(3,1fr)}.reveal-item:nth-child(4),.reveal-item:nth-child(5){display:none}
+      .service-grid{grid-template-columns:1fr 1fr}.service:nth-child(2){border-right:0}
+      .footer-top{grid-template-columns:1.5fr 1fr 1fr}
+      .checkout-layout{grid-template-columns:1fr}
+    }
+    @media(max-width:820px){
+      .header{grid-template-columns:auto 1fr auto}.nav{display:none}.mobile-menu-btn{display:grid}
+      .hero-content{flex-direction:column;align-items:flex-start;bottom:9vh}.hero-description{max-width:300px}
+      .intro{grid-template-columns:1fr;padding:110px 7vw}.intro-copy{margin-top:10px}
+      .product-grid{grid-template-columns:1fr 1fr;gap:55px 12px}.products{padding-left:20px;padding-right:20px}
+      .filter-wrap{align-items:flex-start;flex-direction:column}.collection-count{display:none}
+      .reveal-intro{display:block}.reveal-copy{margin-top:25px}.reveal-grid{grid-template-columns:1fr 1fr}
+      .reveal-item{height:380px}.reveal-item:nth-child(4),.reveal-item:nth-child(5){display:block}.reveal-item:nth-child(even){margin-top:50px}
+      .footer-top{grid-template-columns:1fr 1fr}.footer-logo{grid-column:1/-1}.footer-bottom{margin-top:70px}
+      .product-modal-grid{grid-template-columns:1fr}.modal-card{padding:28px}
+    }
+    @media(max-width:560px){
+      .announcement{font-size:7px;height:29px}.header{top:29px;height:65px;padding:0 15px}.logo{font-size:28px}.header-actions{gap:5px}.icon-btn{width:36px;height:36px}
+      .hero{min-height:680px}.hero-title{font-size:59px}.hero-content{left:20px;right:20px}.hero-scroll{left:20px}
+      .marquee span{font-size:18px;margin:0 20px}.marquee span:after{margin-left:40px}
+      .category-grid,.product-grid{grid-template-columns:1fr}.category-card{height:530px}
+      .products{padding-top:65px}.section-head{padding:0;align-items:flex-start;flex-direction:column}.section-title{font-size:50px}
+      .filter-bar{width:100%;overflow:auto;flex-wrap:nowrap;padding-bottom:5px}.filter-chip{flex-shrink:0}
+      .reveal-section{padding:105px 15px}.reveal-intro{padding:0 5px 55px}.reveal-intro h2{font-size:55px}.reveal-grid{gap:7px}.reveal-item{height:300px}
+      .banner{min-height:70vh}.banner-content h2{font-size:64px}
+      .service-grid{grid-template-columns:1fr}.service{border-right:0;border-bottom:1px solid var(--line);padding:38px 10px}.service h3{margin-top:35px}
+      .newsletter{padding:90px 20px}.newsletter-form{flex-direction:column;border-bottom:0}.newsletter-form input{border-bottom:1px solid var(--ink);padding-bottom:10px}.newsletter-form button{background:var(--ink);color:#fff;padding:14px}
+      footer{padding:80px 20px 25px}.footer-top{grid-template-columns:1fr}.footer-logo{grid-column:auto;font-size:78px}.footer-bottom{flex-direction:column}
+      .modal{padding:10px}.modal-card{padding:22px;max-height:94vh}.modal-title{font-size:36px}.product-modal-grid img{max-height:430px}
+      .search-results{grid-template-columns:1fr 1fr}.form-row{grid-template-columns:1fr}
+      .cart-item{grid-template-columns:68px 1fr}.cart-item-img{width:68px;height:88px}.item-price-col{grid-column:2;flex-direction:row;align-items:center;width:100%}
+      .scroll-top{right:14px;bottom:14px}
+    }
+    @media(prefers-reduced-motion:reduce){
+      *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+    }
+
+    /* ============================================================
+       WearVibes V3 — WEARVIBES BRAND PAGES
+    ============================================================ */
+    .brand-pages{background:var(--paper)}
+    .brand-page{padding:140px 5vw;position:relative;overflow:hidden;border-top:1px solid var(--line)}
+    .brand-page.alt{background:var(--bg)}
+    .brand-page.dark{background:var(--ink);color:#fff}
+    .brand-page-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:7vw;align-items:center}
+    .brand-page.reverse .brand-page-grid{grid-template-columns:.95fr 1.05fr}
+    .brand-page-copy{max-width:620px}
+    .brand-page-copy h2{font:400 clamp(50px,7vw,105px)/.88 var(--serif);letter-spacing:-.07em;margin:18px 0 25px}
+    .brand-page-copy .lead{font-size:14px;line-height:1.9;color:var(--muted);max-width:590px}
+    .dark .brand-page-copy .lead{color:rgba(255,255,255,.58)}
+    .brand-page-image{aspect-ratio:4/5;overflow:hidden;background:var(--surface);position:relative}
+    .brand-page-image.tall{aspect-ratio:3/4}
+    .brand-page-image img{height:100%;object-fit:cover;transition:transform 1.1s var(--ease)}
+    .brand-page-image:hover img{transform:scale(1.04)}
+    .brand-facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);margin-top:40px;border:1px solid var(--line)}
+    .brand-fact{padding:22px;background:var(--paper)}
+    .brand-fact strong{display:block;font:400 25px var(--serif);margin-bottom:6px}
+    .brand-fact span{font-size:9px;text-transform:uppercase;letter-spacing:.13em;color:var(--muted)}
+    .dark .brand-facts{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.12)}
+    .dark .brand-fact{background:var(--ink)}
+    .dark .brand-fact span{color:rgba(255,255,255,.45)}
+    .brand-list{margin-top:34px;border-top:1px solid var(--line)}
+    .brand-list-row{display:grid;grid-template-columns:120px 1fr;gap:25px;padding:20px 0;border-bottom:1px solid var(--line)}
+    .brand-list-row strong{font-size:9px;text-transform:uppercase;letter-spacing:.16em}
+    .brand-list-row p{font-size:11px;line-height:1.8;color:var(--muted)}
+    .dark .brand-list-row{border-color:rgba(255,255,255,.12)}
+    .dark .brand-list-row p{color:rgba(255,255,255,.55)}
+    .brand-cta-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:30px}
+    .brand-cta{display:inline-flex;align-items:center;justify-content:center;padding:14px 20px;background:var(--ink);color:#fff;font-size:8px;text-transform:uppercase;letter-spacing:.15em;transition:.3s var(--ease)}
+    .brand-cta:hover{background:var(--accent);transform:translateY(-2px)}
+    .brand-cta.secondary{background:transparent;color:var(--ink);border:1px solid var(--line-strong)}
+    .brand-cta.secondary:hover{background:var(--ink);color:#fff}
+    .dark .brand-cta{background:#fff;color:var(--ink)}
+    .dark .brand-cta.secondary{background:transparent;color:#fff;border-color:rgba(255,255,255,.3)}
+    .dark .brand-cta.secondary:hover{background:#fff;color:var(--ink)}
+    .brand-anchor{scroll-margin-top:110px}
+    .contact-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:35px}
+    .contact-card{padding:25px;border:1px solid var(--line);background:var(--paper)}
+    .contact-card .small{font-size:8px;text-transform:uppercase;letter-spacing:.16em;color:var(--muted);margin-bottom:10px}
+    .contact-card a{font:400 22px var(--serif);line-height:1.2}
+    .contact-card p{font-size:11px;color:var(--muted);line-height:1.7;margin-top:8px}
+    .contact-form{margin-top:35px;display:grid;gap:13px}
+    .contact-form .form-row{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+    .contact-form input,.contact-form textarea,.contact-form select{width:100%;border:1px solid var(--line);background:transparent;padding:14px;font-size:12px;outline:none}
+    .contact-form textarea{min-height:125px;resize:vertical}
+    .contact-form input:focus,.contact-form textarea:focus,.contact-form select:focus{border-color:var(--ink)}
+    .career-openings{margin-top:35px}
+    .career-opening{display:grid;grid-template-columns:1fr auto;gap:20px;padding:20px 0;border-top:1px solid var(--line);align-items:center}
+    .career-opening:last-child{border-bottom:1px solid var(--line)}
+    .career-opening h3{font:400 23px var(--serif)}
+    .career-opening p{font-size:10px;color:var(--muted);margin-top:6px;line-height:1.6}
+    .career-tag{font-size:8px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted)}
+    @media(max-width:820px){
+      .brand-page{padding:105px 20px}
+      .brand-page-grid,.brand-page.reverse .brand-page-grid{grid-template-columns:1fr;gap:45px}
+      .brand-page.reverse .brand-page-copy{order:1}
+      .brand-page.reverse .brand-page-image{order:2}
+      .brand-page-image{max-height:620px}
+      .brand-facts{grid-template-columns:1fr}
+      .contact-cards{grid-template-columns:1fr}
+    }
+    @media(max-width:560px){
+      .brand-page-copy h2{font-size:52px}
+      .brand-list-row{grid-template-columns:1fr;gap:8px}
+      .contact-form .form-row{grid-template-columns:1fr}
+      .career-opening{grid-template-columns:1fr}
+    }
+
+  
+/* ============================================================
+   WearVibes V4 — RESPONSIVE REBUILD
+   Fixes mobile/tablet overflow, navigation, grids, modals,
+   typography, product cards, checkout and touch targets.
+============================================================ */
+
+/* Safe global sizing */
+*,*::before,*::after{box-sizing:border-box}
+html{width:100%;overflow-x:hidden;scroll-behavior:smooth}
+body{width:100%;max-width:100%;overflow-x:hidden}
+img,video,svg,canvas{max-width:100%}
+button,a,input,select,textarea{font:inherit}
+button{touch-action:manipulation}
+
+/* Header */
+@media(max-width:1100px){
+  .site-header{padding:16px 24px}
+  .site-header nav{gap:18px}
+}
+@media(max-width:820px){
+  .site-header{
+    padding:14px 18px;
+    min-height:68px;
+  }
+  .site-header nav{display:none!important}
+  .header-actions{gap:7px}
+  .header-actions button{min-width:40px;min-height:40px}
+  .menu-toggle{display:grid!important}
+  .logo{font-size:24px}
+}
+
+/* Hero */
+@media(max-width:820px){
+  .hero{min-height:760px}
+  .hero-content{
+    padding:105px 20px 65px;
+    grid-template-columns:1fr!important;
+    align-content:end;
+    gap:35px;
+  }
+  .hero-title{font-size:clamp(64px,18vw,105px)!important}
+  .hero-description{max-width:460px;font-size:13px;line-height:1.7}
+  .hero-scroll{left:20px;bottom:25px}
+}
+@media(max-width:520px){
+  .hero{min-height:690px}
+  .hero-content{padding:95px 17px 55px}
+  .hero-title{font-size:22vw!important;line-height:.86}
+}
+
+/* Main section containers */
+@media(max-width:820px){
+  .intro,.categories,.shop,.newsletter,.footer{
+    padding-left:20px!important;
+    padding-right:20px!important;
+  }
+  .section-head{
+    grid-template-columns:1fr!important;
+    gap:18px!important;
+  }
+  .section-title{font-size:clamp(45px,12vw,72px)!important}
+}
+
+/* Category cards */
+@media(max-width:900px){
+  .category-grid{grid-template-columns:repeat(2,1fr)!important}
+}
+@media(max-width:560px){
+  .category-grid{grid-template-columns:1fr!important}
+  .category-card{min-height:440px}
+}
+
+/* Product shop */
+@media(max-width:1100px){
+  .product-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media(max-width:760px){
+  .product-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}
+  .product-meta{gap:7px}
+  .product-name{font-size:11px!important}
+  .product-price{font-size:10px!important}
+  .product-actions{grid-template-columns:1fr!important}
+  .product-actions .quick-btn{display:none}
+  .add-btn{min-height:42px}
+}
+@media(max-width:430px){
+  .product-grid{gap:9px!important}
+  .product-image{aspect-ratio:3/4!important}
+  .product-name{font-size:10px!important}
+  .product-category{font-size:8px!important}
+}
+
+/* Filter chips */
+@media(max-width:700px){
+  .filter-bar{
+    overflow-x:auto!important;
+    flex-wrap:nowrap!important;
+    justify-content:flex-start!important;
+    padding-bottom:8px;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .filter-bar::-webkit-scrollbar{display:none}
+  .filter-chip{white-space:nowrap;flex:0 0 auto;min-height:40px}
+}
+
+/* Brand pages */
+@media(max-width:1100px){
+  .brand-page{padding:105px 5vw}
+  .brand-page-grid,
+  .brand-page.reverse .brand-page-grid{
+    grid-template-columns:1fr 1fr;
+    gap:5vw;
+  }
+}
+@media(max-width:820px){
+  .brand-page{
+    padding:82px 20px;
+  }
+  .brand-page-grid,
+  .brand-page.reverse .brand-page-grid{
+    display:flex!important;
+    flex-direction:column!important;
+    gap:36px;
+  }
+  .brand-page-copy{max-width:none}
+  .brand-page-copy h2{
+    font-size:clamp(50px,13vw,78px)!important;
+    line-height:.9;
+  }
+  .brand-page-copy .lead{
+    font-size:13px;
+    line-height:1.8;
+  }
+  .brand-page-image{
+    width:100%;
+    aspect-ratio:4/5!important;
+    max-height:none;
+  }
+  .brand-facts{
+    grid-template-columns:1fr!important;
+  }
+  .brand-fact{padding:20px}
+  .brand-list-row{
+    grid-template-columns:1fr!important;
+    gap:9px!important;
+  }
+}
+@media(max-width:480px){
+  .brand-page{padding:72px 17px}
+  .brand-page-copy h2{font-size:15vw!important}
+  .brand-page-image{aspect-ratio:4/5!important}
+  .brand-cta-row{display:grid!important;grid-template-columns:1fr}
+  .brand-cta{width:100%;min-height:48px}
+}
+
+/* Contact */
+@media(max-width:820px){
+  .contact-cards{grid-template-columns:1fr!important}
+  .contact-card a{font-size:20px}
+  .contact-form .form-row{grid-template-columns:1fr!important}
+}
+@media(max-width:480px){
+  .contact-form input,
+  .contact-form textarea,
+  .contact-form select{font-size:16px!important;min-height:48px}
+}
+
+/* Newsletter */
+@media(max-width:700px){
+  .newsletter-grid{grid-template-columns:1fr!important;gap:25px!important}
+  .newsletter-form{width:100%!important}
+}
+
+/* Footer */
+@media(max-width:820px){
+  .footer-grid{grid-template-columns:repeat(2,1fr)!important;gap:35px!important}
+}
+@media(max-width:500px){
+  .footer-grid{grid-template-columns:1fr!important}
+}
+
+/* Generic modal — fit every screen */
+.modal{
+  padding:12px!important;
+}
+.modal .modal-panel,
+.modal-content{
+  width:min(1100px,calc(100vw - 24px))!important;
+  max-width:calc(100vw - 24px)!important;
+  max-height:calc(100dvh - 24px)!important;
+  overflow:auto!important;
+}
+@media(max-width:820px){
+  .modal .modal-panel,
+  .modal-content{
+    width:calc(100vw - 20px)!important;
+    max-width:calc(100vw - 20px)!important;
+    max-height:calc(100dvh - 20px)!important;
+    padding:22px!important;
+  }
+}
+@media(max-width:520px){
+  .modal{padding:8px!important}
+  .modal .modal-panel,
+  .modal-content{
+    width:calc(100vw - 16px)!important;
+    max-width:calc(100vw - 16px)!important;
+    max-height:calc(100dvh - 16px)!important;
+    padding:17px!important;
+  }
+}
+
+/* Checkout */
+@media(max-width:820px){
+  .checkout-layout{grid-template-columns:1fr!important;gap:25px!important}
+  .order-summary{position:static!important}
+}
+@media(max-width:560px){
+  .form-row{grid-template-columns:1fr!important}
+  .payment-options{gap:7px}
+}
+
+/* Size guide / policy content */
+@media(max-width:700px){
+  .policy-grid{grid-template-columns:1fr!important}
+  .measure-grid{grid-template-columns:1fr!important}
+  .size-table-wrap{overflow-x:auto!important}
+  .size-table{min-width:620px}
+}
+
+/* Tracking */
+@media(max-width:560px){
+  .tracking-form{grid-template-columns:1fr!important}
+  .track-points{font-size:7px!important}
+}
+
+/* Mobile navigation */
+.mobile-nav{
+  width:100vw!important;
+  max-width:100vw!important;
+}
+@media(max-width:520px){
+  .mobile-nav{padding:90px 20px 30px!important}
+  .mobile-nav a{font-size:34px!important}
+}
+
+/* Prevent long strings from breaking layouts */
+.product-name,.order-id,.contact-card a,.brand-list-row p,
+.policy-block p,.hero-description,.lead{
+  overflow-wrap:anywhere;
+}
+
+/* Touch-friendly interactive controls */
+@media(pointer:coarse){
+  button,a,.filter-chip,.add-btn,.quick-btn{
+    -webkit-tap-highlight-color:transparent;
+  }
+}
+
+/* Landscape phones */
+@media(max-height:500px) and (orientation:landscape){
+  .hero{min-height:620px}
+  .hero-content{padding-top:90px}
+  .mobile-nav{overflow:auto}
+}
+
+/* Reduced motion */
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
+  }
+}
+
+
+
+/* ============================================================
+   FIT & STYLE STUDIO — SIGNATURE EXPERIENCE
+============================================================ */
+.fit-studio{position:relative;background:var(--ink);color:#fff;padding:clamp(70px,9vw,135px) clamp(18px,5vw,70px);overflow:hidden;isolation:isolate}
+.fit-studio:before{content:"";position:absolute;inset:-25%;background:radial-gradient(circle at 18% 20%,rgba(169,111,78,.22),transparent 28%),radial-gradient(circle at 82% 70%,rgba(255,255,255,.08),transparent 25%);filter:blur(10px);animation:fitAura 12s ease-in-out infinite alternate;z-index:-1}
+.fit-studio:after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:46px 46px;mask-image:linear-gradient(to bottom,transparent,black 15%,black 85%,transparent);pointer-events:none;z-index:-1}
+@keyframes fitAura{to{transform:translate3d(4%, -3%,0) scale(1.08);opacity:.72}}
+.fit-studio-head{max-width:1050px;margin:0 auto 42px;text-align:center}.fit-studio-head .eyebrow{color:rgba(255,255,255,.48)}
+.fit-studio-title{font:400 clamp(48px,7vw,104px)/.92 var(--serif);letter-spacing:-.065em;margin:13px auto 20px}.fit-studio-title em{color:#d5a37f;font-style:normal}.fit-studio-lead{max-width:650px;margin:auto;color:rgba(255,255,255,.62);font-size:clamp(12px,1.2vw,15px);line-height:1.8}
+.fit-studio-shell{max-width:1440px;margin:auto;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(390px,.95fr);gap:18px;align-items:stretch}
+.fit-preview{position:relative;min-height:760px;border:1px solid rgba(255,255,255,.12);background:linear-gradient(145deg,#211b17,#0f0d0b);overflow:hidden;border-radius:2px;box-shadow:0 35px 90px rgba(0,0,0,.32)}
+.fit-preview:before{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:rgba(169,111,78,.12);filter:blur(60px);left:50%;top:43%;transform:translate(-50%,-50%);animation:fitPulse 5s ease-in-out infinite}.fit-preview:after{content:"";position:absolute;left:8%;right:8%;bottom:7%;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent)}
+@keyframes fitPulse{50%{transform:translate(-50%,-50%) scale(1.16);opacity:.6}}
+.fit-preview-top{position:absolute;top:20px;left:20px;right:20px;z-index:8;display:flex;justify-content:space-between;align-items:center}.fit-preview-kicker{font-size:8px;text-transform:uppercase;letter-spacing:.2em;color:rgba(255,255,255,.45)}.fit-preview-badge{padding:8px 11px;border:1px solid rgba(255,255,255,.13);border-radius:99px;font-size:8px;letter-spacing:.12em;text-transform:uppercase;background:rgba(255,255,255,.04);backdrop-filter:blur(10px)}
+.fit-canvas-wrap{position:absolute;inset:65px 20px 86px;display:grid;place-items:center}.fit-canvas{width:min(100%,560px);height:100%;max-height:650px;display:block;filter:drop-shadow(0 28px 30px rgba(0,0,0,.3))}
+.fit-preview-caption{position:absolute;left:24px;right:24px;bottom:20px;z-index:5;display:flex;justify-content:space-between;align-items:end;gap:20px}.fit-look-name{font:400 clamp(25px,3vw,40px)/1 var(--serif);letter-spacing:-.04em}.fit-look-meta{font-size:9px;color:rgba(255,255,255,.48);text-transform:uppercase;letter-spacing:.15em;margin-top:7px}.fit-score{text-align:right}.fit-score strong{display:block;font:400 28px var(--serif);color:#d5a37f}.fit-score span{font-size:7px;color:rgba(255,255,255,.42);text-transform:uppercase;letter-spacing:.14em}
+.fit-photo-preview{position:absolute;inset:65px 20px 86px;display:none;place-items:center;z-index:4}.fit-photo-preview.active{display:grid}.fit-photo-preview img{max-height:100%;max-width:100%;width:auto;object-fit:contain;border-radius:2px;box-shadow:0 30px 70px rgba(0,0,0,.4)}
+.fit-controls{background:rgba(251,248,242,.98);color:var(--ink);border:1px solid rgba(255,255,255,.12);padding:clamp(24px,3vw,38px);display:flex;flex-direction:column;min-height:760px}.fit-control-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;padding-bottom:24px;border-bottom:1px solid var(--line)}.fit-control-head h3{font:400 clamp(28px,3vw,44px)/1 var(--serif);letter-spacing:-.045em}.fit-control-head p{max-width:220px;color:var(--muted);font-size:10px;line-height:1.7;text-align:right}
+.fit-step{padding:24px 0;border-bottom:1px solid var(--line)}.fit-step-label{display:flex;align-items:center;gap:9px;font-size:8px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin-bottom:14px}.fit-step-num{width:23px;height:23px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:#fff;font-size:8px}
+.fit-dress-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.fit-dress{position:relative;aspect-ratio:.78;border:1px solid var(--line);background:#f0ebe4;overflow:hidden;text-align:left;transition:.45s var(--ease);cursor:pointer}.fit-dress img{height:100%;object-fit:cover;transition:transform .7s var(--ease),filter .5s}.fit-dress:hover img,.fit-dress.active img{transform:scale(1.07)}.fit-dress:hover,.fit-dress.active{border-color:var(--ink);box-shadow:0 12px 25px rgba(23,19,15,.1)}.fit-dress.active:after{content:"✓";position:absolute;right:7px;top:7px;width:24px;height:24px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:10px}.fit-dress-name{position:absolute;bottom:0;left:0;right:0;padding:22px 8px 8px;background:linear-gradient(transparent,rgba(0,0,0,.72));color:#fff;font-size:7px;line-height:1.2;text-transform:uppercase;letter-spacing:.08em}
+.fit-body-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.fit-body{border:1px solid var(--line);background:#f7f3ed;padding:9px 5px 8px;text-align:center;cursor:pointer;transition:.35s var(--ease)}.fit-body:hover,.fit-body.active{border-color:var(--ink);background:#fff;transform:translateY(-3px);box-shadow:0 10px 20px rgba(23,19,15,.08)}.fit-body svg{width:100%;height:80px;display:block;margin:auto}.fit-body span{display:block;font-size:7px;text-transform:uppercase;letter-spacing:.09em;margin-top:5px}.fit-body small{display:block;color:var(--muted);font-size:6px;margin-top:4px}
+.fit-measure-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.fit-field label{display:block;font-size:7px;text-transform:uppercase;letter-spacing:.13em;color:var(--muted);margin-bottom:7px}.fit-field input{width:100%;border:1px solid var(--line);background:#fff;padding:12px 10px;outline:none;font-size:12px}.fit-field input:focus{border-color:var(--ink);box-shadow:0 0 0 3px rgba(169,111,78,.12)}
+.fit-actions{display:flex;gap:8px;margin-top:auto;padding-top:22px}.fit-primary,.fit-secondary{min-height:50px;padding:0 18px;text-transform:uppercase;letter-spacing:.15em;font-size:8px}.fit-primary{flex:1;background:var(--ink);color:#fff;position:relative;overflow:hidden}.fit-primary:before{content:"";position:absolute;inset:0;background:var(--accent);transform:translateX(-101%);transition:transform .5s var(--ease)}.fit-primary:hover:before{transform:none}.fit-primary span{position:relative;z-index:1}.fit-secondary{border:1px solid var(--line);min-width:50px}.fit-secondary:hover{background:var(--surface)}
+.fit-result{margin-top:14px;padding:14px;background:#f1ece5;display:flex;gap:12px;align-items:center}.fit-result-icon{width:34px;height:34px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:12px}.fit-result strong{font-size:11px}.fit-result p{font-size:9px;color:var(--muted);margin-top:3px;line-height:1.5}
+.fit-view-toggle{display:flex;gap:4px;margin-top:12px}.fit-view-toggle button{flex:1;border:1px solid var(--line);padding:10px;font-size:7px;text-transform:uppercase;letter-spacing:.12em}.fit-view-toggle button.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.fit-upload{display:none;margin-top:10px;padding:12px;border:1px dashed var(--line);background:#f7f3ed}.fit-upload.active{display:block}.fit-upload label{display:flex;justify-content:center;align-items:center;min-height:44px;font-size:8px;text-transform:uppercase;letter-spacing:.12em;cursor:pointer}.fit-upload input{display:none}.fit-note{font-size:8px;line-height:1.6;color:var(--muted);margin-top:12px}.fit-note strong{color:var(--ink)}
+.fit-studio.revealed .fit-control-head h3{animation:fitTextIn .8s var(--ease)}
+@keyframes fitTextIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@media(max-width:1050px){.fit-studio-shell{grid-template-columns:1fr}.fit-preview,.fit-controls{min-height:650px}.fit-canvas-wrap{inset:60px 15% 75px}}
+@media(max-width:650px){.fit-studio{padding:70px 12px}.fit-studio-title{font-size:52px}.fit-preview{min-height:590px}.fit-controls{min-height:auto;padding:22px 17px}.fit-control-head{display:block}.fit-control-head p{text-align:left;margin-top:10px}.fit-dress-grid{grid-template-columns:repeat(2,1fr)}.fit-body-grid{grid-template-columns:repeat(3,1fr)}.fit-body:nth-child(4),.fit-body:nth-child(5){display:none}.fit-body svg{height:74px}.fit-measure-grid{grid-template-columns:1fr 1fr}.fit-measure-grid .fit-field:last-child{grid-column:1/-1}.fit-preview-caption{left:17px;right:17px}.fit-canvas-wrap{inset:55px 5% 80px}.fit-photo-preview{inset:55px 8% 80px}.fit-score{display:none}}
+@media(max-width:390px){.fit-studio-title{font-size:45px}.fit-preview{min-height:530px}.fit-dress-grid{gap:5px}.fit-body-grid{grid-template-columns:repeat(3,1fr);gap:5px}.fit-measure-grid{grid-template-columns:1fr}.fit-measure-grid .fit-field:last-child{grid-column:auto}.fit-actions{flex-direction:column}.fit-secondary{width:100%}}
+@media(prefers-reduced-motion:reduce){.fit-studio:before,.fit-preview:before{animation:none}.fit-dress img,.fit-body{transition:none}}
+
+/* ============================================================
+   REAL AI VIRTUAL TRY-ON UI
+============================================================ */
+.fit-ai-studio{position:relative;overflow:hidden;background:#100d0b;color:#f5eee8;padding:clamp(70px,9vw,130px) clamp(20px,5vw,70px);isolation:isolate}
+.fit-ai-studio:before{content:"";position:absolute;inset:-25%;background:radial-gradient(circle at 15% 20%,rgba(185,137,55,.18),transparent 28%),radial-gradient(circle at 85% 75%,rgba(141,37,69,.20),transparent 32%);filter:blur(20px);animation:fitAiAmbient 12s ease-in-out infinite alternate;z-index:-1}
+@keyframes fitAiAmbient{to{transform:scale(1.12) rotate(3deg);opacity:.72}}
+.fit-ai-shell{max-width:1500px;margin:50px auto 0;grid-template-columns:minmax(0,1.08fr) minmax(360px,.92fr)}
+.fit-ai-preview{background:linear-gradient(145deg,#17120f,#0b0908);border:1px solid rgba(255,255,255,.12);box-shadow:0 30px 90px rgba(0,0,0,.35);min-height:720px}
+.fit-ai-stage{position:relative;min-height:590px;margin:0 20px;border:1px solid rgba(255,255,255,.08);border-radius:28px;overflow:hidden;background:radial-gradient(circle at 50% 35%,rgba(255,255,255,.06),transparent 35%),#0b0908;display:grid;place-items:center}
+.fit-ai-stage:after{content:"";position:absolute;inset:12%;border:1px solid rgba(255,255,255,.05);border-radius:45%;pointer-events:none}
+.fit-ai-empty{text-align:center;max-width:350px;padding:35px;z-index:2}.fit-ai-empty strong{display:block;font:500 24px/1.2 Georgia,serif;margin-top:24px}.fit-ai-empty p{color:rgba(255,255,255,.55);line-height:1.6;margin-top:10px}
+.fit-ai-orbit{width:110px;height:110px;border:1px solid rgba(255,255,255,.18);border-radius:50%;margin:auto;position:relative;animation:fitOrbit 8s linear infinite}.fit-ai-orbit:before,.fit-ai-orbit:after{content:"";position:absolute;border:1px solid rgba(213,163,127,.2);border-radius:50%;inset:15px;transform:rotate(60deg)}.fit-ai-orbit:after{inset:28px;transform:rotate(-60deg)}.fit-ai-orbit span{position:absolute;width:7px;height:7px;border-radius:50%;background:#d5a37f;left:50%;top:-3px;box-shadow:0 0 18px #d5a37f}.fit-ai-orbit span:nth-child(2){top:auto;bottom:13px;left:12px}.fit-ai-orbit span:nth-child(3){top:38px;left:auto;right:4px}
+@keyframes fitOrbit{to{transform:rotate(360deg)}}
+.fit-ai-loading{width:min(380px,80%);text-align:center;z-index:3}.fit-ai-spinner{width:48px;height:48px;border:1px solid rgba(255,255,255,.2);border-top-color:#d5a37f;border-radius:50%;margin:0 auto 22px;animation:fitSpin 1s linear infinite}@keyframes fitSpin{to{transform:rotate(360deg)}}.fit-ai-loading-title{font:500 25px Georgia,serif}.fit-ai-progress{height:3px;background:rgba(255,255,255,.1);margin:24px 0 10px;overflow:hidden;border-radius:4px}.fit-ai-progress span{display:block;width:8%;height:100%;background:linear-gradient(90deg,#d5a37f,#fff);transition:width .5s ease}.fit-ai-loading-step{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+.fit-ai-result{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:10px;z-index:4;background:#080706;animation:fitResultIn .9s cubic-bezier(.22,.61,.36,1) both}@keyframes fitResultIn{from{opacity:0;transform:scale(.96);filter:blur(10px)}to{opacity:1;transform:none;filter:none}}
+.fit-ai-before{position:absolute;left:20px;bottom:20px;width:112px;height:148px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.25);z-index:7;background:#111;box-shadow:0 15px 30px rgba(0,0,0,.3)}.fit-ai-before span{position:absolute;top:7px;left:8px;z-index:2;font-size:8px;letter-spacing:.12em;background:rgba(0,0,0,.55);padding:4px 6px;border-radius:20px}.fit-ai-before img{width:100%;height:100%;object-fit:cover}
+.fit-ai-status strong{font-size:20px}.fit-ai-status span{font-size:9px}.fit-ai-upload label{display:flex;align-items:center;gap:16px}.fit-upload-icon{width:42px;height:42px;border:1px solid rgba(0,0,0,.14);border-radius:50%;display:grid;place-items:center;font-size:22px}.fit-ai-upload small{display:block;margin-top:4px;color:rgba(0,0,0,.55)}.fit-ai-file{display:flex;align-items:center;gap:12px;padding:10px;margin-top:10px;border:1px solid rgba(0,0,0,.1);border-radius:14px;background:#fff}.fit-ai-file img{width:54px;height:68px;object-fit:cover;border-radius:8px}.fit-ai-file div{flex:1}.fit-ai-file strong,.fit-ai-file span{display:block}.fit-ai-file span{font-size:12px;opacity:.6;margin-top:4px}.fit-ai-file button{border:0;background:transparent;text-decoration:underline;cursor:pointer}.fit-ai-error{margin-top:15px;padding:14px 16px;border:1px solid rgba(145,38,45,.3);background:rgba(145,38,45,.08);color:#7d2028;border-radius:12px;font-size:13px;line-height:1.5}.fit-ai-result-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.fit-download{text-decoration:none;text-align:center;display:flex;align-items:center;justify-content:center}
+.fit-ai-generate{position:relative;overflow:hidden}.fit-ai-generate:after{content:"";position:absolute;inset:0;transform:translateX(-110%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent)}.fit-ai-generate:not(:disabled):hover:after{animation:fitShimmer 1s ease}@keyframes fitShimmer{to{transform:translateX(110%)}}
+.fit-ai-generate:disabled{opacity:.55;cursor:wait}.fit-ai-stage.is-result .fit-ai-empty{display:none}
+@media(max-width:1050px){.fit-ai-shell{grid-template-columns:1fr}.fit-ai-preview{min-height:600px}.fit-ai-stage{min-height:520px}}
+@media(max-width:650px){.fit-ai-preview{min-height:520px}.fit-ai-stage{min-height:430px;margin:0 10px}.fit-ai-result-actions{grid-template-columns:1fr}.fit-ai-before{width:80px;height:108px;left:12px;bottom:12px}.fit-ai-loading-title{font-size:20px}}
+
+
+    /* WearVibes editorial gallery */
+    .editorial-gallery{padding:clamp(72px,10vw,150px) 4vw;background:var(--paper)}
+    .editorial-head{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:42px}
+    .editorial-intro{max-width:360px;color:var(--muted);font-size:13px;line-height:1.9}
+    .editorial-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:minmax(190px,24vw);gap:12px}
+    .editorial-tile{position:relative;display:block;overflow:hidden;background:var(--surface);min-height:210px;isolation:isolate}
+    .editorial-tile:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(transparent,rgba(16,12,9,.7));z-index:1;pointer-events:none}
+    .editorial-tile img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease);filter:saturate(.92)}
+    .editorial-tile:hover img{transform:scale(1.055)}
+    .editorial-tile-tall{grid-row:span 2}
+    .editorial-tile-wide{grid-column:span 2}
+    .editorial-caption{position:absolute;z-index:2;left:20px;right:20px;bottom:20px;color:#fff;display:flex;flex-direction:column;gap:5px}
+    .editorial-caption small{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.75)}
+    .editorial-caption strong{font:400 clamp(18px,2vw,27px)/1.15 var(--serif);font-weight:400}
+    .image-note{max-width:850px;margin:18px 0 0;color:var(--muted);font-size:10px;line-height:1.7}
+    @media(max-width:760px){
+      .editorial-head{align-items:flex-start;flex-direction:column}
+      .editorial-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:240px;gap:9px}
+      .editorial-tile-tall{grid-row:span 2}
+      .editorial-tile-wide{grid-column:span 2}
+      .editorial-caption{left:13px;right:13px;bottom:14px}
+    }
+    @media(max-width:420px){
+      .editorial-grid{grid-auto-rows:190px}
+      .editorial-tile{min-height:170px}
+    }
+
+  </style>
+</head>
+
+<body>
+  <div class="loader" id="loader">
+    <div class="loader-inner">
+      <div class="loader-logo">WearVibes</div>
+      <div class="loader-sub">Modern Indian Luxury</div>
+      <div class="loader-line"><span id="loaderBar"></span></div>
+    </div>
+  </div>
+
+  <div class="announcement">Complimentary shipping on orders above ₹2,999 · The festive edit is here</div>
+
+  <header class="header" id="siteHeader">
+    <a class="logo" href="#home" aria-label="WearVibes home">WearVibes</a>
+    <nav class="nav" aria-label="Primary navigation">
+      <a href="#shop">Shop</a>
+      <a href="#categories">Collections</a>
+      <a href="#new">New In</a>
+      <a href="#story">Our Story</a>
+      <a href="#sustainability">Sustainability</a>
+      <a href="#careers">Careers</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="openSearch()" aria-label="Search">⌕</button>
+      <button class="icon-btn" onclick="openAccount()" aria-label="Account">◯</button>
+      <button class="icon-btn" onclick="toggleWishlistPanel()" aria-label="Wishlist">♡<span class="cart-count" id="wishlistCount">0</span></button>
+      <button class="icon-btn" onclick="openCart()" aria-label="Shopping bag">⛃<span class="cart-count" id="cartCount">0</span></button>
+      <button class="icon-btn mobile-menu-btn" onclick="openMobileMenu()" aria-label="Open menu">☰</button>
+    </div>
+  </header>
+
+  <nav class="mobile-nav" id="mobileNav" aria-label="Mobile navigation">
+    <button class="mobile-nav-close" onclick="closeMobileMenu()" aria-label="Close menu">✕</button>
+    <a href="#shop" onclick="closeMobileMenu()">Shop</a>
+    <a href="#categories" onclick="closeMobileMenu()">Collections</a>
+    <a href="#new" onclick="closeMobileMenu()">New In</a>
+    <a href="#story" onclick="closeMobileMenu()">Our Story</a>
+    <a href="#sustainability" onclick="closeMobileMenu()">Sustainability</a>
+    <a href="#careers" onclick="closeMobileMenu()">Careers</a>
+    
+  </nav>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-bg"></div>
+      <div class="hero-grain"></div>
+      <div class="hero-content">
+        <div>
+          <div class="hero-kicker">WearVibes / 2026 COLLECTION</div>
+          <h1 class="hero-title">
+            <span><i>Wear</i></span>
+            <span><i>your</i></span>
+            <span><i>story.</i></span>
+          </h1>
+        </div>
+        <div>
+          <p class="hero-description">Contemporary Indian silhouettes, considered details and expressive craft — designed for women moving between tradition and now.</p>
+          <a href="#shop" class="hero-cta">Shop the collection <span>↗</span></a>
+        </div>
+      </div>
+      <div class="hero-scroll">Scroll to explore</div>
+    </section>
+
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>WearVibes</span><span>INDIAN COUTURE</span><span>MODERN SILHOUETTES</span><span>MADE TO BE REMEMBERED</span>
+        <span>WearVibes</span><span>INDIAN COUTURE</span><span>MODERN SILHOUETTES</span><span>MADE TO BE REMEMBERED</span>
+      </div>
+    </div>
+
+    <section class="intro" id="story-intro">
+      <div>
+        <div class="eyebrow">01 / The WearVibes edit</div>
+        <h2>Tradition,<br>reimagined.</h2>
+      </div>
+      <div class="intro-copy">
+        <strong>Indian craft, edited for now.</strong>
+        WearVibes brings together expressive craftsmanship and contemporary styling. From everyday kurtis to statement lehengas, every piece is designed to feel effortless, elevated and unmistakably yours.
+      </div>
+    </section>
+
+    <section class="categories" id="categories">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">02 / Explore</div>
+          <h2 class="section-title">Shop by mood.</h2>
+        </div>
+        <div class="section-note">Four ways into the WearVibes wardrobe — from ceremony to everyday ease.</div>
+        <button class="quick-btn" onclick="resetShop()">View all ↗</button>
+      </div>
+
+      <div class="category-grid">
+        <a href="#shop" class="category-card" onclick="filterFromCategory(event,'Lehengas')">
+          <img src="https://manyavar.scene7.com/is/image/manyavar/UL5328-436-SEA%2BGREEN-3-101_05-02-2026-10-16%3A650x900" alt="Lehengas" loading="lazy">
+          <div class="category-overlay"><div class="category-name">Lehengas</div><div class="category-small">Occasion / Bridal / Festive</div><div class="category-arrow">Explore ↗</div></div>
+        </a>
+        <a href="#shop" class="category-card" onclick="filterFromCategory(event,'Sarees')">
+          <img src="https://img.tatacliq.com/images/i28/1348Wx2000H/MP000000028999483_1348Wx2000H_202511010155333.jpeg" alt="Sarees" loading="lazy">
+          <div class="category-overlay"><div class="category-name">Sarees</div><div class="category-small">Classic / Contemporary</div><div class="category-arrow">Explore ↗</div></div>
+        </a>
+        <a href="#shop" class="category-card" onclick="filterFromCategory(event,'Suits')">
+          <img src="https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=1100&q=88" alt="Suits" loading="lazy">
+          <div class="category-overlay"><div class="category-name">Suits</div><div class="category-small">Elegant / Everyday</div><div class="category-arrow">Explore ↗</div></div>
+        </a>
+        <a href="#shop" class="category-card" onclick="filterFromCategory(event,'Dresses')">
+          <img src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1100&q=88" alt="Dresses" loading="lazy">
+          <div class="category-overlay"><div class="category-name">Dresses</div><div class="category-small">Modern / Occasion</div><div class="category-arrow">Explore ↗</div></div>
+        </a>
+      </div>
+    </section>
+
+
+    <section class="editorial-gallery" id="style-edit">
+      <div class="section-head editorial-head">
+        <div>
+          <div class="eyebrow">03 / The WearVibes edit</div>
+          <h2 class="section-title">A little inspiration.<br><em>A lot of personality.</em></h2>
+        </div>
+        <p class="editorial-intro">From statement occasionwear to effortless everyday looks, explore the mood behind the collection.</p>
+      </div>
+      <div class="editorial-grid">
+        <a class="editorial-tile editorial-tile-tall" href="#shop" onclick="filterFromCategory(event,'Lehengas')">
+          <img src="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1000&q=85" alt="Festive statement outfit inspiration" loading="lazy" decoding="async">
+          <span class="editorial-caption"><small>01 / Occasion</small><strong>Make an entrance</strong></span>
+        </a>
+        <a class="editorial-tile" href="#shop" onclick="filterFromCategory(event,'Sarees')">
+          <img src="https://images.unsplash.com/photo-1583391733981-849840d0c4b1?auto=format&fit=crop&w=900&q=85" alt="Elegant draped fashion inspiration" loading="lazy" decoding="async">
+          <span class="editorial-caption"><small>02 / Heritage</small><strong>The art of drape</strong></span>
+        </a>
+        <a class="editorial-tile" href="#shop" onclick="filterFromCategory(event,'Dresses')">
+          <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=900&q=85" alt="Contemporary fashion look" loading="lazy" decoding="async">
+          <span class="editorial-caption"><small>03 / Modern</small><strong>Own your silhouette</strong></span>
+        </a>
+        <a class="editorial-tile" href="#shop" onclick="filterFromCategory(event,'Suits')">
+          <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=900&q=85" alt="Contemporary outfit styling" loading="lazy" decoding="async">
+          <span class="editorial-caption"><small>04 / Everyday</small><strong>Easy, elevated dressing</strong></span>
+        </a>
+        <a class="editorial-tile editorial-tile-wide" href="#shop" onclick="filterFromCategory(event,'Coord Sets')">
+          <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1200&q=85" alt="Editorial fashion styling inspiration" loading="lazy" decoding="async">
+          <span class="editorial-caption"><small>05 / The edit</small><strong>Style it your way</strong></span>
+        </a>
+        <a class="editorial-tile" href="#shop" onclick="filterFromCategory(event,'Kurtis')">
+          <img src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=900&q=85" alt="Minimal modern clothing inspiration" loading="lazy" decoding="async">
+          <span class="editorial-caption"><small>06 / Essentials</small><strong>Everyday, reimagined</strong></span>
+        </a>
+        <a class="editorial-tile" href="#shop" onclick="filterFromCategory(event,'Coord Sets')">
+          <img src="https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?auto=format&fit=crop&w=900&q=85" alt="Curated wardrobe and clothing inspiration" loading="lazy" decoding="async">
+          <span class="editorial-caption"><small>07 / Wardrobe</small><strong>Pieces that work together</strong></span>
+        </a>
+        <a class="editorial-tile" href="#shop" onclick="filterFromCategory(event,'Kurtis')">
+          <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=900&q=85" alt="Contemporary clothing collection" loading="lazy" decoding="async">
+          <span class="editorial-caption"><small>08 / Details</small><strong>Small details, big mood</strong></span>
+        </a>
+        <a class="editorial-tile" href="#shop" onclick="filterFromCategory(event,'Dresses')">
+          <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=900&q=85" alt="Modern dress styling inspiration" loading="lazy" decoding="async">
+          <span class="editorial-caption"><small>09 / Silhouette</small><strong>Find your favourite shape</strong></span>
+        </a>
+        <a class="editorial-tile" href="#shop" onclick="filterFromCategory(event,'Suits')">
+          <img src="https://images.unsplash.com/photo-1566206091558-7f218b696731?auto=format&fit=crop&w=900&q=85" alt="Fashion editorial outfit" loading="lazy" decoding="async">
+          <span class="editorial-caption"><small>10 / Occasion</small><strong>Ready for the moment</strong></span>
+        </a>
+        <a class="editorial-tile" href="#shop" onclick="filterFromCategory(event,'Coord Sets')">
+          <img src="https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=900&q=85" alt="Clothing fabric and style inspiration" loading="lazy" decoding="async">
+          <span class="editorial-caption"><small>11 / Texture</small><strong>Feel the difference</strong></span>
+        </a>
+        <a class="editorial-tile" href="#shop" onclick="filterFromCategory(event,'Dresses')">
+          <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=85" alt="Street style fashion editorial" loading="lazy" decoding="async">
+          <span class="editorial-caption"><small>12 / Street style</small><strong>Style without rules</strong></span>
+        </a>
+      </div>
+      <p class="image-note">Editorial imagery is sourced from Unsplash and used as visual inspiration. Product photos, prices, availability and garment details should be replaced with verified brand inventory before taking real orders.</p>
+    </section>
+
+    <section class="products" id="shop">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">04 / New In</div>
+          <h2 class="section-title" id="new">The full collection.</h2>
+        </div>
+      </div>
+      <div class="filter-wrap">
+        <div class="filter-bar" id="filterBar"></div>
+        <div class="collection-count">14 pieces · designed in India</div>
+      </div>
+      <div class="product-grid" id="productGrid"></div>
+      <div class="no-results" id="noResults">No pieces match this filter yet. Try another category.</div>
+    </section>
+
+    <section class="reveal-section">
+      <div class="reveal-intro">
+        <div>
+          <div class="eyebrow" style="color:rgba(255,255,255,.45)">04 / Craft</div>
+          <h2>Every drape<br>tells a story.</h2>
+        </div>
+        <p class="reveal-copy">Textures, handwork and movement come together in pieces made to live beyond the occasion.</p>
+      </div>
+      <div class="reveal-grid">
+        <div class="reveal-item"><img src="https://images.unsplash.com/photo-1583391733981-849840d0c4b1?auto=format&fit=crop&w=800&q=85" alt="WearVibes saree detail" loading="lazy"></div>
+        <div class="reveal-item"><img src="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=800&q=85" alt="WearVibes lehenga detail" loading="lazy"></div>
+        <div class="reveal-item"><img src="https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=800&q=85" alt="WearVibes suit detail" loading="lazy"></div>
+        <div class="reveal-item"><img src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=800&q=85" alt="WearVibes dress detail" loading="lazy"></div>
+        <div class="reveal-item"><img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=85" alt="WearVibes editorial" loading="lazy"></div>
+      </div>
+    </section>
+
+    <section class="banner">
+      <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=2200&q=88" alt="WearVibes festive collection" loading="lazy">
+      <div class="banner-content">
+        <p>Festive edit / 2026</p>
+        <h2>Radiant.<br>Unapologetic.</h2>
+        <a href="#shop" class="banner-cta">Explore the edit ↗</a>
+      </div>
+    </section>
+
+    <section class="services">
+      <div class="service-grid">
+        <div class="service"><div class="service-number">01</div><h3>Free shipping</h3><p>Complimentary delivery on every order above ₹2,999, across India in 3–6 business days.</p></div>
+        <div class="service"><div class="service-number">02</div><h3>Easy returns</h3><p>7-day no-questions-asked returns and free exchanges on all full-price pieces.</p></div>
+        <div class="service"><div class="service-number">03</div><h3>Made to order</h3><p>Select lehengas and suits can be tailored to your measurements on request.</p></div>
+        <div class="service"><div class="service-number">04</div><h3>Secure checkout</h3><p>Pay by card, UPI or cash on delivery through a simple, secure checkout.</p></div>
+      </div>
+    </section>
+
+
+
+<!-- ============================================================
+     FIT & STYLE STUDIO — WearVibes SIGNATURE FEATURE
+============================================================ -->
+<section class="fit-studio fit-ai-studio" id="fit-studio">
+  <div class="fit-studio-head">
+    <div class="eyebrow">05 / AI Virtual Try-On</div>
+    <h2 class="fit-studio-title">Wear it <em>before</em><br>you buy it.</h2>
+    <p class="fit-studio-lead">Upload a clear photo, choose the exact WearVibes piece, and let AI render that garment on you while preserving your identity, pose and styling.</p>
+  </div>
+
+  <div class="fit-studio-shell fit-ai-shell">
+    <div class="fit-preview fit-ai-preview" aria-live="polite">
+      <div class="fit-preview-top"><span class="fit-preview-kicker">WearVibes AI fitting room</span><span class="fit-preview-badge" id="fitPreviewBadge">Ready for try-on</span></div>
+      <div class="fit-ai-stage" id="fitAiStage">
+        <div class="fit-ai-empty" id="fitAiEmpty">
+          <div class="fit-ai-empty-copy">
+            <div class="fit-ai-orbit"><span></span><span></span><span></span></div>
+            <span class="fit-ai-sample-kicker">YOUR PERSONAL FITTING ROOM</span>
+            <strong>Your AI try-on appears here</strong>
+            <p>Select a garment, upload your photo, then generate your look.</p>
+          </div>
+          <figure class="fit-ai-sample-card">
+            <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=700&q=85" alt="Sample Indian festive fashion look for inspiration" loading="lazy">
+            <figcaption><span>STYLE INSPIRATION</span><b>Sample look · not your result</b></figcaption>
+          </figure>
+        </div>
+        <div class="fit-ai-loading" id="fitAiLoading" hidden>
+          <div class="fit-ai-spinner"></div>
+          <div class="fit-ai-loading-title" id="fitAiLoadingTitle">Preparing your try-on…</div>
+          <div class="fit-ai-progress"><span id="fitAiProgressBar"></span></div>
+          <div class="fit-ai-loading-step" id="fitAiLoadingStep">Checking your image</div>
+        </div>
+        <img class="fit-ai-result" id="fitAiResult" alt="AI virtual try-on result" hidden>
+        <div class="fit-ai-before" id="fitAiBefore" hidden><span>YOUR PHOTO</span><img id="fitAiBeforeImg" alt="Uploaded photo used for virtual try-on"></div>
+      </div>
+      <div class="fit-preview-caption">
+        <div><div class="fit-look-name" id="fitLookName">Rani Pink Bridal Lehenga</div><div class="fit-look-meta" id="fitLookMeta">Lehengas · AI try-on ready</div></div>
+        <div class="fit-score fit-ai-status"><strong id="fitScore">—</strong><span id="fitScoreLabel">AI status</span></div>
+      </div>
+    </div>
+
+    <div class="fit-controls">
+      <div class="fit-control-head"><div><div class="eyebrow">Personalise your look</div><h3>Build your AI try-on.</h3></div><p>Your photo is sent to the configured AI provider only when you press Generate AI Try-On.</p></div>
+
+      <div class="fit-step">
+        <div class="fit-step-label"><span class="fit-step-num">01</span> Choose the exact WearVibes piece</div>
+        <div class="fit-dress-grid" id="fitDressGrid"></div>
+      </div>
+
+      <div class="fit-step">
+        <div class="fit-step-label"><span class="fit-step-num">02</span> Tell AI your style profile</div>
+        <div class="fit-body-grid" id="fitBodyGrid"></div>
+        <p class="fit-note">Your uploaded photo remains the source of truth for the AI try-on. This profile is additional styling guidance, not a measurement of your body.</p>
+      </div>
+
+      <div class="fit-step">
+        <div class="fit-step-label"><span class="fit-step-num">03</span> Optional fit details</div>
+        <div class="fit-measure-grid">
+          <div class="fit-field"><label for="fitBust">Bust / chest</label><input id="fitBust" type="number" min="28" max="60" placeholder="34" inputmode="decimal"></div>
+          <div class="fit-field"><label for="fitWaist">Natural waist</label><input id="fitWaist" type="number" min="22" max="55" placeholder="28" inputmode="decimal"></div>
+          <div class="fit-field"><label for="fitHip">Full hip</label><input id="fitHip" type="number" min="30" max="65" placeholder="36" inputmode="decimal"></div>
+        </div>
+        <div class="fit-result" id="fitResult"><div class="fit-result-icon">✦</div><div><strong id="fitResultTitle">AI will use your photo for the visual try-on.</strong><p id="fitResultText">Measurements are kept as optional sizing context and are not used to claim an exact fit.</p></div></div>
+      </div>
+
+      <div class="fit-step">
+        <div class="fit-step-label"><span class="fit-step-num">04</span> Upload your photo</div>
+        <div class="fit-upload fit-ai-upload active" id="fitUpload">
+          <label for="fitPhotoInput"><span class="fit-upload-icon">↑</span><span><strong>Upload a clear front-facing photo</strong><small>JPG, PNG or WEBP · max 10 MB · full/3⁄4 body works best</small></span><input id="fitPhotoInput" type="file" accept="image/jpeg,image/png,image/webp"></label>
+        </div>
+        <div class="fit-ai-file" id="fitAiFile" hidden><img id="fitAiFileThumb" alt="Selected photo thumbnail"><div><strong id="fitAiFileName">Photo selected</strong><span id="fitAiFileMeta">Ready for AI</span></div><button type="button" id="fitAiRemovePhoto">Remove</button></div>
+        <p class="fit-note"><strong>Privacy:</strong> the browser sends the selected photo to your WearVibes backend only when you generate a try-on. The backend forwards it to the configured AI provider. Do not upload photos you do not have permission to process.</p>
+      </div>
+
+      <div class="fit-actions"><button class="fit-primary fit-ai-generate" type="button" id="applyFitBtn"><span>Generate AI Try-On <b>✦</b></span></button><button class="fit-secondary" type="button" id="fitResetBtn">Reset</button></div>
+      <div class="fit-ai-error" id="fitAiError" role="alert" hidden></div>
+      <div class="fit-ai-result-actions" id="fitAiResultActions" hidden><button type="button" class="fit-secondary" id="fitAiRetry">Try again</button><a class="fit-primary fit-download" id="fitAiDownload" href="#" download="WearVibes-ai-try-on.png">Save result ↓</a></div>
+    </div>
+  </div>
+</section>
+
+
+    <!-- ============================================================
+         WEARVIBES BRAND PAGES
+    ============================================================ -->
+    <section class="brand-pages">
+
+      <section class="brand-page brand-anchor" id="story">
+        <div class="brand-page-grid">
+          <div class="brand-page-copy">
+            <div class="eyebrow">05 / Our Story</div>
+            <h2>Tradition,<br>made relevant.</h2>
+            <p class="lead">
+              WearVibes is a contemporary fashion brand built around the meeting point of Indian heritage and modern design.
+              The brand celebrates traditional craftsmanship, intricate embroidery and handwoven fabrics while translating them
+              into silhouettes made for the modern woman.
+            </p>
+            <div class="brand-list">
+              <div class="brand-list-row">
+                <strong>Our point of view</strong>
+                <p>High-quality ethnic wear at accessible prices, with craftsmanship and contemporary styling at the centre.</p>
+              </div>
+              <div class="brand-list-row">
+                <strong>Our design language</strong>
+                <p>Classic Indian techniques are paired with modern cuts, versatile styling and details that work across occasions.</p>
+              </div>
+              <div class="brand-list-row">
+                <strong>Our ambition</strong>
+                <p>To grow from a modern ethnic-wear label into a versatile fashion brand spanning occasion and regular wear while staying rooted in Indian culture.</p>
+              </div>
+            </div>
+            <div class="brand-cta-row">
+              <a class="brand-cta" href="#shop">Shop WearVibes-inspired edit ↗</a>
+              <button class="brand-cta secondary" onclick="openInfoPage('story')">Read the full story</button>
+            </div>
+          </div>
+          <div class="brand-page-image">
+            <img src="https://images.unsplash.com/photo-1583391733981-849840d0c4b1?auto=format&fit=crop&w=1400&q=90" alt="Indian saree craftsmanship" loading="lazy">
+          </div>
+        </div>
+        <div class="brand-facts">
+          <div class="brand-fact"><strong>2024</strong><span>Brand established</span></div>
+          <div class="brand-fact"><strong>India</strong><span>Designed & rooted here</span></div>
+          <div class="brand-fact"><strong>Tradition + Now</strong><span>Core design philosophy</span></div>
+        </div>
+      </section>
+
+      <section class="brand-page alt brand-anchor" id="sustainability">
+        <div class="brand-page-grid">
+          <div class="brand-page-image tall">
+            <img src="https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=1400&q=90" alt="Indian textile and craft detail" loading="lazy">
+          </div>
+          <div class="brand-page-copy">
+            <div class="eyebrow">06 / Sustainability</div>
+            <h2>Better choices,<br>beautifully made.</h2>
+            <p class="lead">
+              WearVibes has publicly described sustainability as an important part of its evolution — from eco-friendly fabrics
+              and natural dyes to reducing production waste, recyclable packaging and working with artisans who follow ethical practices.
+            </p>
+            <div class="brand-list">
+              <div class="brand-list-row">
+                <strong>Materials</strong>
+                <p>A focus on eco-friendly fabrics and more responsible material choices wherever practical.</p>
+              </div>
+              <div class="brand-list-row">
+                <strong>Process</strong>
+                <p>Efficient production is used to reduce waste while preserving the craftsmanship that gives each piece its character.</p>
+              </div>
+              <div class="brand-list-row">
+                <strong>Packaging</strong>
+                <p>Minimal and recyclable packaging is part of the brand's stated sustainability direction.</p>
+              </div>
+              <div class="brand-list-row">
+                <strong>People</strong>
+                <p>WearVibes has highlighted collaboration with artisans who follow ethical practices and help keep traditional craft relevant.</p>
+              </div>
+            </div>
+            <div class="brand-cta-row">
+              <button class="brand-cta" onclick="openInfoPage('sustainability')">Explore our approach ↗</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="brand-page brand-anchor" id="careers">
+        <div class="brand-page-grid">
+          <div class="brand-page-copy">
+            <div class="eyebrow">07 / Careers</div>
+            <h2>Build the next<br>chapter with us.</h2>
+            <p class="lead">
+              We are building a fashion brand where heritage, product, technology, storytelling and customer experience meet.
+              If you care about Indian craft and modern fashion, we'd love to hear from you.
+            </p>
+            <div class="career-openings">
+              <div class="career-opening">
+                <div><h3>Creative & Design</h3><p>Design, styling, trend research and collection development.</p></div>
+                <span class="career-tag">Open application</span>
+              </div>
+              <div class="career-opening">
+                <div><h3>E-commerce & Growth</h3><p>Digital merchandising, performance marketing and customer journeys.</p></div>
+                <span class="career-tag">Open application</span>
+              </div>
+              <div class="career-opening">
+                <div><h3>Content & Social</h3><p>Editorial storytelling, campaigns, social media and community.</p></div>
+                <span class="career-tag">Open application</span>
+              </div>
+            </div>
+            <div class="brand-cta-row">
+              <a class="brand-cta" href="mailto:hello@wearvibes.example?subject=Career%20Application%20-%20WearVibes">Apply by email ↗</a>
+              <button class="brand-cta secondary" onclick="openInfoPage('careers')">Career information</button>
+            </div>
+          </div>
+          <div class="brand-page-image">
+            <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1400&q=90" alt="Fashion creative studio" loading="lazy">
+          </div>
+        </div>
+      </section>
+
+      <section class="brand-page alt brand-anchor" id="contact">
+        <div class="brand-page-grid">
+          <div class="brand-page-image">
+            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1400&q=90" alt="Contemporary fashion collection" loading="lazy">
+          </div>
+          <div class="brand-page-copy">
+            <div class="eyebrow">08 / Contact us</div>
+            <h2>Let's talk<br>fashion.</h2>
+            <p class="lead">For order help, product questions, collaborations, careers or general enquiries, reach out and our team can help route your message.</p>
+            <div class="contact-cards">
+              <div class="contact-card">
+                <div class="small">Customer care</div>
+                <a href="tel:18002663333">1800-266-3333</a>
+                <p>Customer support information publicly listed for WearVibes on marketplace channels.</p>
+              </div>
+              <div class="contact-card">
+                <div class="small">Registered / manufacturer address</div>
+                <p>WearVibes Fashion Private Limited<br>G57, Sector 63, Noida, Gautambuddha Nagar, Uttar Pradesh 201301, India</p>
+              </div>
+            </div>
+            <form class="contact-form" id="contactForm">
+              <div class="form-row">
+                <input id="contactName" type="text" placeholder="Your name" required aria-label="Your name">
+                <input id="contactEmail" type="email" placeholder="Email address" required aria-label="Email address">
+              </div>
+              <select id="contactTopic" aria-label="Enquiry type">
+                <option>Customer care</option>
+                <option>Product enquiry</option>
+                <option>Order / delivery</option>
+                <option>Returns / exchanges</option>
+                <option>Collaboration</option>
+                <option>Careers</option>
+                <option>Other</option>
+              </select>
+              <textarea id="contactMessage" placeholder="How can we help?" required aria-label="Message"></textarea>
+              <button class="brand-cta" type="submit">Send enquiry →</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+    </section>
+
+    <section class="newsletter">
+      <div class="eyebrow">The WearVibes list</div>
+      <h2>First access to new drops and private sales.</h2>
+      <p>One thoughtful email a week. No noise, unsubscribe anytime.</p>
+      <form class="newsletter-form" id="newsletterForm">
+        <input type="email" placeholder="Your email address" required aria-label="Email address">
+        <button type="submit">Subscribe →</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-top">
+      <div class="footer-col">
+        <div class="footer-logo">WearVibes</div>
+        <p class="footer-blurb">Contemporary Indian fashion for women who move between tradition and now. Designed in India, worn everywhere.</p>
+        <div class="footer-social" aria-label="Social media">
+          <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram" class="social-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.5" r="1"/></svg>
+          </a>
+          <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook" class="social-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.7 21v-8h2.7l.4-3h-3.1V8.1c0-.9.3-1.6 1.7-1.6h1.6V3.8c-.3 0-1.2-.1-2.2-.1-2.2 0-3.7 1.3-3.7 3.8V10H9v3h2.1v8h2.6z"/></svg>
+          </a>
+          <a href="https://pinterest.com" target="_blank" rel="noopener" aria-label="Pinterest" class="social-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2a8.8 8.8 0 0 0-3.2 17c-.1-1.5 0-3.3.4-4.7l1-4.1s-.3-.7-.3-1.7c0-1.6.9-2.8 2.1-2.8 1 0 1.5.7 1.5 1.6 0 1-.6 2.5-.9 3.9-.3 1.2.6 2.2 1.8 2.2 2.2 0 3.9-2.3 3.9-5.6 0-2.9-2.1-4.9-5.1-4.9-3.5 0-5.6 2.6-5.6 5.3 0 1 .4 2.1.9 2.7.1.1.1.2.1.4l-.3 1.2c-.1.4-.3.5-.6.3-1.5-.7-2.4-2.8-2.4-4.5 0-3.7 2.7-7.1 7.8-7.1 4.1 0 7.3 2.9 7.3 6.8 0 4.1-2.6 7.4-6.2 7.4-1.2 0-2.3-.6-2.7-1.3l-.8 3c-.3 1.1-1.1 2.5-1.6 3.4.9.3 1.8.5 2.8.5A8.8 8.8 0 1 0 12 3.2z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-col"><h4>Shop</h4><button onclick="filterFromCategory(event,'Lehengas')">Lehengas</button><button onclick="filterFromCategory(event,'Sarees')">Sarees</button><button onclick="filterFromCategory(event,'Suits')">Suits</button><button onclick="filterFromCategory(event,'Dresses')">Dresses</button></div>
+      <div class="footer-col"><h4>Help</h4><button onclick="openInfoToast('Shipping & delivery')">Shipping & delivery</button><button onclick="openInfoToast('Returns & exchanges')">Returns & exchanges</button><button onclick="openTracking()">Track my order</button><button onclick="openInfoToast('Size guide')">Size guide</button></div>
+      <div class="footer-col"><h4>Company</h4><a href="#story">Our story</a><a href="#careers">Careers</a><a href="#sustainability">Sustainability</a><a href="#contact">Contact us</a></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© <span id="year">2026</span> WearVibes. All rights reserved.</span>
+      <span>Privacy Policy · Terms of Service</span>
+    </div>
+  </footer>
+
+  <div class="drawer-overlay" id="cartOverlay" onclick="closeCart()"></div>
+  <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping bag">
+    <div class="drawer-head"><h3>Your Bag</h3><button class="close-btn" onclick="closeCart()" aria-label="Close bag">✕</button></div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer">
+      <div class="total-line"><span>Subtotal</span><span id="cartSubtotal">₹0</span></div>
+      <div class="total-line"><span>Shipping</span><span id="cartShipping">Free</span></div>
+      <div class="total-line grand"><span>Total</span><span id="cartTotal">₹0</span></div>
+      <button class="checkout-btn" id="checkoutBtn" onclick="openCheckout()" disabled>Checkout</button>
+    </div>
+  </aside>
+
+  <div class="modal" id="productModal"><div class="modal-card" role="dialog" aria-modal="true" aria-label="Product details"><button class="modal-close" onclick="closeModal('productModal')" aria-label="Close">✕</button><div id="productModalBody"></div></div></div>
+
+  <div class="modal" id="searchModal"><div class="modal-card" role="dialog" aria-modal="true" aria-label="Search"><button class="modal-close" onclick="closeModal('searchModal')" aria-label="Close">✕</button><div class="modal-title">Search</div><div class="search-input-row"><span>⌕</span><input type="text" id="searchInput" placeholder="Search sarees, lehengas, kurtis…" oninput="runSearch(this.value)"></div><div id="searchSuggestionsWrap"><div class="field-label">Popular searches</div><div class="search-suggestions"><button onclick="quickSearch('Saree')">Saree</button><button onclick="quickSearch('Lehenga')">Lehenga</button><button onclick="quickSearch('Kurti')">Kurti</button><button onclick="quickSearch('Coord')">Coord set</button><button onclick="quickSearch('Suit')">Suit</button></div></div><div class="search-results" id="searchResults"></div><div class="search-empty" id="searchEmpty" style="display:none">No results found. Try a different search term.</div></div></div>
+
+  <div class="modal" id="accountModal"><div class="modal-card narrow" role="dialog" aria-modal="true" aria-label="Account"><button class="modal-close" onclick="closeModal('accountModal')" aria-label="Close">✕</button><div id="accountModalBody"></div></div></div>
+
+  <div class="modal" id="ordersModal"><div class="modal-card" role="dialog" aria-modal="true" aria-label="Your orders"><button class="modal-close" onclick="closeModal('ordersModal')" aria-label="Close">✕</button><div class="modal-title">Your Orders</div><div id="ordersBody"></div></div></div>
+
+  <div class="modal" id="checkoutModal"><div class="modal-card" role="dialog" aria-modal="true" aria-label="Checkout"><button class="modal-close" onclick="closeModal('checkoutModal')" aria-label="Close">✕</button><div id="checkoutModalBody"></div></div></div>
+
+
+  <div class="modal" id="infoModal">
+    <div class="modal-card policy-card" role="dialog" aria-modal="true" aria-label="WearVibes information">
+      <button class="modal-close" onclick="closeModal('infoModal')" aria-label="Close">✕</button>
+      <div id="infoModalBody"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="trackingModal">
+    <div class="modal-card narrow tracking-card" role="dialog" aria-modal="true" aria-label="Track your order">
+      <button class="modal-close" onclick="closeModal('trackingModal')" aria-label="Close">✕</button>
+      <div class="modal-title">Track your order</div>
+      <p class="modal-lead">Enter your WearVibes order number to see the latest status.</p>
+      <form class="tracking-form" onsubmit="return trackOrder(event)">
+        <input id="trackingInput" type="text" placeholder="e.g. WearVibes482731" autocomplete="off" required>
+        <button class="place-order-btn" type="submit">Track order →</button>
+      </form>
+      <div id="trackingResult"></div>
+      <div class="tracking-help">Your order number appears in your confirmation screen and order history.</div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Scroll to top">↑</button>
+
+  <script>
+
+"use strict";
+
+/* ============================================================
+   PRODUCT DATA
+============================================================ */
+
+const IMG = {
+  lehenga: "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1000&q=85",
+  saree: "https://images.unsplash.com/photo-1583391733981-849840d0c4b1?auto=format&fit=crop&w=1000&q=85",
+  suit: "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=1000&q=85",
+  dress: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1000&q=85",
+  hero: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1000&q=85",
+  alt1: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1000&q=85",
+  alt2: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1000&q=85",
+  alt3: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1000&q=85",
+  fusion: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=1000&q=85",
+  wardrobe: "https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?auto=format&fit=crop&w=1000&q=85",
+  editorial: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1000&q=85",
+  studio: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=1000&q=85",
+  statement: "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?auto=format&fit=crop&w=1000&q=85",
+  chic: "https://images.unsplash.com/photo-1551232864-3f0890e580d9?auto=format&fit=crop&w=1000&q=85",
+  classic: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1000&q=85",
+  modern: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1000&q=85",
+  luxe: "https://images.unsplash.com/photo-1566206091558-7f218b696731?auto=format&fit=crop&w=1000&q=85",
+  detail: "https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=1000&q=85"
+};
+
+const PRODUCTS = [
+  { id:1, name:"Rani Pink Bridal Lehenga", category:"Lehengas", price:18999, oldPrice:24999, badge:"Bestseller", img:IMG.lehenga, img2:IMG.alt1, description:"A hand-embroidered bridal lehenga in deep rani pink, finished with zari thread work and a matching dupatta. Fully lined for structure and comfort through long celebrations.", sizes:["XS","S","M","L","XL"] },
+  { id:2, name:"Emerald Zari Lehenga Set", category:"Lehengas", price:15499, img:IMG.fusion, img2:IMG.lehenga, description:"Rich emerald silk lehenga with gold zari borders, paired with a fitted blouse and net dupatta — built for festive evenings.", sizes:["XS","S","M","L","XL"] },
+  { id:3, name:"Ivory Banarasi Silk Saree", category:"Sarees", price:8999, badge:"New", img:IMG.saree, img2:IMG.alt2, description:"Woven on traditional looms, this ivory Banarasi silk saree carries a gold-tone border and pallu, with an unstitched matching blouse piece.", sizes:["One Size"] },
+  { id:4, name:"Coral Chiffon Printed Saree", category:"Sarees", price:4499, oldPrice:5999, img:IMG.modern, img2:IMG.saree, description:"Lightweight chiffon saree in a hand-drawn coral print, designed to drape effortlessly for daytime events and office festivities.", sizes:["One Size"] },
+  { id:5, name:"Indigo Handloom Cotton Saree", category:"Sarees", price:3299, img:IMG.detail, img2:IMG.hero, description:"Breathable handloom cotton in indigo, woven with a contrast temple border — an everyday classic that layers beautifully.", sizes:["One Size"] },
+  { id:6, name:"Mustard Embroidered Anarkali Suit", category:"Suits", price:6499, badge:"New", img:IMG.suit, img2:IMG.alt3, description:"Floor-length Anarkali suit in mustard georgette with thread embroidery on the yoke, paired with matching churidar and dupatta.", sizes:["XS","S","M","L","XL","XXL"] },
+  { id:7, name:"Powder Blue Straight Suit Set", category:"Suits", price:3999, img:IMG.statement, img2:IMG.suit, description:"A tailored straight-cut suit in powder blue cotton silk with delicate block printing, made for all-day comfort.", sizes:["XS","S","M","L","XL","XXL"] },
+  { id:8, name:"Sage Green Sharara Suit", category:"Suits", price:7299, oldPrice:8999, img:IMG.studio, img2:IMG.suit, description:"Sage green sharara set with mirror-work detailing on the kurta and flared sharara pants, styled with a net dupatta.", sizes:["XS","S","M","L","XL"] },
+  { id:9, name:"Terracotta Wrap Midi Dress", category:"Dresses", price:3799, badge:"New", img:IMG.editorial, img2:IMG.hero, description:"A fusion wrap dress in terracotta with block-printed borders — ties at the waist and moves easily from desk to dinner.", sizes:["XS","S","M","L","XL"] },
+  { id:10, name:"Ivory Tiered Cotton Dress", category:"Dresses", price:3299, img:IMG.chic, img2:IMG.alt2, description:"Airy tiered dress in handwoven ivory cotton with subtle gota trim along the neckline, perfect for warm-weather festivities.", sizes:["XS","S","M","L"] },
+  { id:11, name:"Blush Floral Kurti", category:"Kurtis", price:1899, img:IMG.wardrobe, img2:IMG.alt1, description:"Relaxed-fit kurti in blush floral rayon with side slits and three-quarter sleeves — an everyday staple that layers well.", sizes:["XS","S","M","L","XL","XXL"] },
+  { id:12, name:"Charcoal Chikankari Kurti", category:"Kurtis", price:2599, badge:"Bestseller", img:IMG.classic, img2:IMG.suit, description:"Hand chikankari embroidery on breathable charcoal cotton, a versatile piece that pairs equally well with jeans or palazzos.", sizes:["XS","S","M","L","XL"] },
+  { id:13, name:"Olive Printed Co-ord Set", category:"Coord Sets", price:3499, img:IMG.luxe, img2:IMG.dress, description:"Cropped top and flared pant co-ord set in an olive hand-block print — a modern take on easy, everyday ethnic dressing.", sizes:["XS","S","M","L","XL"] },
+  { id:14, name:"Rust Ikat Co-ord Set", category:"Coord Sets", price:3899, oldPrice:4799, img:IMG.modern, img2:IMG.alt3, description:"Ikat-woven rust co-ord set with a relaxed shirt-style top and straight pants, cut from breathable cotton-linen.", sizes:["XS","S","M","L","XL"] }
+];
+
+const CATEGORIES = ["All","Lehengas","Sarees","Suits","Dresses","Kurtis","Coord Sets"];
+
+/* ============================================================
+   STATE
+============================================================ */
+
+const state = {
+  cart: [],
+  wishlist: [],
+  orders: [],
+  user: null,
+  filter: "All",
+  authMode: "login"
+};
+
+function loadState(){
+  try{ state.cart = JSON.parse(localStorage.getItem("WearVibes_cart")) || []; }catch(e){ state.cart = []; }
+  try{ state.wishlist = JSON.parse(localStorage.getItem("WearVibes_wishlist")) || []; }catch(e){ state.wishlist = []; }
+  try{ state.orders = JSON.parse(localStorage.getItem("WearVibes_orders")) || []; }catch(e){ state.orders = []; }
+  try{ state.user = JSON.parse(localStorage.getItem("WearVibes_user")) || null; }catch(e){ state.user = null; }
+}
+
+function saveCart(){ localStorage.setItem("WearVibes_cart", JSON.stringify(state.cart)); }
+function saveWishlist(){ localStorage.setItem("WearVibes_wishlist", JSON.stringify(state.wishlist)); }
+function saveOrders(){ localStorage.setItem("WearVibes_orders", JSON.stringify(state.orders)); }
+function saveUser(){ localStorage.setItem("WearVibes_user", JSON.stringify(state.user)); }
+
+function findProduct(id){ return PRODUCTS.find(p => p.id === Number(id)); }
+function formatPrice(n){ return "₹" + Number(n).toLocaleString("en-IN"); }
+
+/* ============================================================
+   TOAST
+============================================================ */
+
+let toastTimer = null;
+function showToast(msg){
+  const toast = document.getElementById("toast");
+  toast.textContent = msg;
+  toast.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove("show"), 2600);
+}
+
+function openInfoToast(label){
+  showToast(label + " — details coming soon.");
+}
+
+/* ============================================================
+   PRODUCT GRID / FILTER
+============================================================ */
+
+function renderFilterBar(){
+  const bar = document.getElementById("filterBar");
+  bar.innerHTML = CATEGORIES.map(c =>
+    `<button class="filter-chip${c === state.filter ? " active" : ""}" onclick="setFilter('${c}')">${c}</button>`
+  ).join("");
+}
+
+function setFilter(cat){
+  state.filter = cat;
+  renderFilterBar();
+  renderProducts();
+}
+
+function filterFromCategory(e, cat){
+  if(e) e.preventDefault();
+  setFilter(cat);
+  document.getElementById("shop").scrollIntoView({ behavior:"smooth", block:"start" });
+}
+
+function resetShop(){
+  setFilter("All");
+  document.getElementById("shop").scrollIntoView({ behavior:"smooth" });
+}
+
+function renderProducts(){
+  const grid = document.getElementById("productGrid");
+  const noResults = document.getElementById("noResults");
+  const list = state.filter === "All" ? PRODUCTS : PRODUCTS.filter(p => p.category === state.filter);
+
+  if(list.length === 0){
+    grid.innerHTML = "";
+    noResults.classList.add("active");
+    return;
+  }
+  noResults.classList.remove("active");
+
+  grid.innerHTML = list.map(p => {
+    const isWished = state.wishlist.includes(p.id);
+    return `
+    <div class="product" data-id="${p.id}">
+      <div class="product-image" onclick="openProductModal(${p.id})">
+        ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ""}
+        <button class="product-heart${isWished ? " active" : ""}" onclick="event.stopPropagation(); toggleWishlist(${p.id}, this)" aria-label="Add to wishlist">${isWished ? "♥" : "♡"}</button>
+        <img src="${p.img}" alt="${p.name}" loading="lazy" decoding="async">
+        <div class="product-quickview">Quick view</div>
+      </div>
+      <div class="product-meta">
+        <div>
+          <div class="product-name">${p.name}</div>
+          <div class="product-category">${p.category}</div>
+        </div>
+        <div class="product-price">
+          ${p.oldPrice ? `<span class="strike">${formatPrice(p.oldPrice)}</span>` : ""}${formatPrice(p.price)}
+        </div>
+      </div>
+      <div class="product-actions">
+        <button class="add-btn" onclick="quickAdd(${p.id})">Add to bag</button>
+        <button class="quick-btn" onclick="openProductModal(${p.id})">View</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function quickAdd(id){
+  const p = findProduct(id);
+  addToCart(id, p.sizes[Math.floor(p.sizes.length / 2)], 1);
+}
+
+/* ============================================================
+   WISHLIST
+============================================================ */
+
+function toggleWishlist(id, btn){
+  const idx = state.wishlist.indexOf(id);
+  if(idx > -1){
+    state.wishlist.splice(idx, 1);
+    if(btn){ btn.classList.remove("active"); btn.textContent = "♡"; }
+    showToast("Removed from wishlist");
+  } else {
+    state.wishlist.push(id);
+    if(btn){ btn.classList.add("active"); btn.textContent = "♥"; }
+    showToast("Added to wishlist");
+  }
+  saveWishlist();
+  updateWishlistCount();
+}
+
+function updateWishlistCount(){
+  document.getElementById("wishlistCount").textContent = state.wishlist.length;
+}
+
+function toggleWishlistPanel(){
+  if(state.wishlist.length === 0){
+    showToast("Your wishlist is empty — tap the heart on any piece to save it.");
+    return;
+  }
+  setFilter("All");
+  runSearch("");
+  openSearch();
+  const results = document.getElementById("searchResults");
+  const items = PRODUCTS.filter(p => state.wishlist.includes(p.id));
+  document.getElementById("searchSuggestionsWrap").style.display = "none";
+  document.querySelector("#searchModal .modal-title").textContent = "Your Wishlist";
+  document.getElementById("searchEmpty").style.display = items.length ? "none" : "block";
+  results.innerHTML = items.map(renderSearchResult).join("");
+}
+
+/* ============================================================
+   PRODUCT MODAL
+============================================================ */
+
+let modalState = { id:null, size:null, qty:1 };
+
+function openProductModal(id){
+  const p = findProduct(id);
+  modalState = { id, size:p.sizes[0], qty:1 };
+  const body = document.getElementById("productModalBody");
+  body.innerHTML = `
+    <div class="product-modal-grid">
+      <img src="${p.img}" alt="${p.name}">
+      <div class="modal-details">
+        <h3>${p.name}</h3>
+        <div class="modal-category">${p.category}</div>
+        <div class="modal-price">${p.oldPrice ? `<span class="strike" style="margin-right:10px;color:var(--muted);text-decoration:line-through">${formatPrice(p.oldPrice)}</span>` : ""}${formatPrice(p.price)}</div>
+        <p class="modal-description">${p.description}</p>
+
+        <div class="field-label">Select size</div>
+        <div class="size-list" id="sizeList">
+          ${p.sizes.map(s => `<button class="size${s === modalState.size ? " selected" : ""}" onclick="selectSize('${s}', this)">${s}</button>`).join("")}
+        </div>
+
+        <div class="field-label">Quantity</div>
+        <div class="modal-qty">
+          <button onclick="changeModalQty(-1)" aria-label="Decrease quantity">−</button>
+          <span id="modalQtyVal">${modalState.qty}</span>
+          <button onclick="changeModalQty(1)" aria-label="Increase quantity">+</button>
+        </div>
+
+        <button class="modal-add-btn" onclick="addFromModal()">Add to bag — ${formatPrice(p.price)}</button>
+        <p class="modal-note">Free shipping on orders above ₹2,999 · 7-day easy returns</p>
+      </div>
+    </div>
+  `;
+  document.getElementById("productModal").classList.add("active");
+  document.body.classList.add("locked");
+}
+
+function selectSize(s, btn){
+  modalState.size = s;
+  document.querySelectorAll("#sizeList .size").forEach(el => el.classList.remove("selected"));
+  btn.classList.add("selected");
+}
+
+function changeModalQty(delta){
+  modalState.qty = Math.max(1, Math.min(10, modalState.qty + delta));
+  document.getElementById("modalQtyVal").textContent = modalState.qty;
+}
+
+function addFromModal(){
+  addToCart(modalState.id, modalState.size, modalState.qty);
+  closeModal("productModal");
+}
+
+/* ============================================================
+   CART
+============================================================ */
+
+function addToCart(id, size, qty){
+  const existing = state.cart.find(i => i.id === id && i.size === size);
+  if(existing){
+    existing.qty += qty;
+  } else {
+    state.cart.push({ id, size, qty });
+  }
+  saveCart();
+  updateCartUI();
+  const p = findProduct(id);
+  showToast(`${p.name} added to your bag`);
+  openCart();
+}
+
+function changeCartQty(index, delta){
+  const item = state.cart[index];
+  item.qty += delta;
+  if(item.qty <= 0){
+    state.cart.splice(index, 1);
+  }
+  saveCart();
+  updateCartUI();
+}
+
+function removeFromCart(index){
+  state.cart.splice(index, 1);
+  saveCart();
+  updateCartUI();
+  showToast("Removed from bag");
+}
+
+function cartTotal(){
+  return state.cart.reduce((sum, item) => {
+    const p = findProduct(item.id);
+    return sum + (p ? p.price * item.qty : 0);
+  }, 0);
+}
+
+function cartCountTotal(){
+  return state.cart.reduce((sum, item) => sum + item.qty, 0);
+}
+
+function updateCartUI(){
+  document.getElementById("cartCount").textContent = cartCountTotal();
+  updateWishlistCount();
+
+  const wrap = document.getElementById("cartItems");
+  const checkoutBtn = document.getElementById("checkoutBtn");
+
+  if(state.cart.length === 0){
+    wrap.innerHTML = `<div class="empty-cart"><div style="font-size:34px">🛍</div><div>Your bag is empty.</div><button class="quick-btn" onclick="closeCart()">Continue shopping</button></div>`;
+    checkoutBtn.disabled = true;
+  } else {
+    wrap.innerHTML = state.cart.map((item, idx) => {
+      const p = findProduct(item.id);
+      if(!p) return "";
+      return `
+      <div class="cart-item">
+        <img class="cart-item-img" src="${p.img}" alt="${p.name}">
+        <div>
+          <h4>${p.name}</h4>
+          <p>Size: ${item.size}</p>
+          <div class="qty">
+            <button onclick="changeCartQty(${idx},-1)" aria-label="Decrease quantity">−</button>
+            <span>${item.qty}</span>
+            <button onclick="changeCartQty(${idx},1)" aria-label="Increase quantity">+</button>
+          </div>
+        </div>
+        <div class="item-price-col">
+          <strong>${formatPrice(p.price * item.qty)}</strong>
+          <button class="remove" onclick="removeFromCart(${idx})">Remove</button>
+        </div>
+      </div>`;
+    }).join("");
+    checkoutBtn.disabled = false;
+  }
+
+  const total = cartTotal();
+  document.getElementById("cartSubtotal").textContent = formatPrice(total);
+  document.getElementById("cartShipping").textContent = total >= 2999 || total === 0 ? "Free" : formatPrice(99);
+  document.getElementById("cartTotal").textContent = formatPrice(total + (total > 0 && total < 2999 ? 99 : 0));
+}
+
+function openCart(){
+  document.getElementById("cartDrawer").classList.add("active");
+  document.getElementById("cartOverlay").classList.add("active");
+  document.body.classList.add("locked");
+}
+
+function closeCart(){
+  document.getElementById("cartDrawer").classList.remove("active");
+  document.getElementById("cartOverlay").classList.remove("active");
+  document.body.classList.remove("locked");
+}
+
+/* ============================================================
+   GENERIC MODAL HELPERS
+============================================================ */
+
+function closeModal(id){
+  document.getElementById(id).classList.remove("active");
+  document.body.classList.remove("locked");
+}
+
+function openGenericModal(id){
+  document.getElementById(id).classList.add("active");
+  document.body.classList.add("locked");
+}
+
+/* ============================================================
+   SEARCH
+============================================================ */
+
+function renderSearchResult(p){
+  return `<div class="search-result" onclick="closeModal('searchModal'); openProductModal(${p.id})">
+    <img src="${p.img}" alt="${p.name}">
+    <h4>${p.name}</h4>
+    <p>${p.category} · ${formatPrice(p.price)}</p>
+  </div>`;
+}
+
+function openSearch(){
+  document.querySelector("#searchModal .modal-title").textContent = "Search";
+  document.getElementById("searchSuggestionsWrap").style.display = "block";
+  document.getElementById("searchInput").value = "";
+  document.getElementById("searchResults").innerHTML = "";
+  document.getElementById("searchEmpty").style.display = "none";
+  openGenericModal("searchModal");
+  setTimeout(() => document.getElementById("searchInput").focus(), 300);
+}
+
+function quickSearch(term){
+  document.getElementById("searchInput").value = term;
+  runSearch(term);
+}
+
+function runSearch(query){
+  const q = query.trim().toLowerCase();
+  const results = document.getElementById("searchResults");
+  const empty = document.getElementById("searchEmpty");
+
+  if(q === ""){
+    results.innerHTML = "";
+    empty.style.display = "none";
+    return;
+  }
+
+  const matches = PRODUCTS.filter(p =>
+    p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q)
+  );
+
+  if(matches.length === 0){
+    results.innerHTML = "";
+    empty.style.display = "block";
+  } else {
+    empty.style.display = "none";
+    results.innerHTML = matches.map(renderSearchResult).join("");
+  }
+}
+
+/* ============================================================
+   ACCOUNT / AUTH
+============================================================ */
+
+function openAccount(){
+  renderAccountModal();
+  openGenericModal("accountModal");
+}
+
+function renderAccountModal(){
+  const body = document.getElementById("accountModalBody");
+
+  if(state.user){
+    body.innerHTML = `
+      <div class="account-panel">
+        <div class="account-greeting">Hi, ${state.user.name.split(" ")[0]}</div>
+        <div class="account-email">${state.user.email}</div>
+        <div class="account-links">
+          <button onclick="closeModal('accountModal'); showOrders()"><span>My orders</span><span>→</span></button>
+          <button onclick="closeModal('accountModal'); toggleWishlistPanel()"><span>Wishlist (${state.wishlist.length})</span><span>→</span></button>
+          <button onclick="openInfoToast('Saved addresses')"><span>Saved addresses</span><span>→</span></button>
+          <button onclick="openInfoToast('Account details')"><span>Account details</span><span>→</span></button>
+        </div>
+        <button class="logout-btn" onclick="logout()">Log out</button>
+      </div>
+    `;
+    return;
+  }
+
+  body.innerHTML = `
+    <div class="modal-title">${state.authMode === "login" ? "Welcome back" : "Create account"}</div>
+    <div class="auth-tabs">
+      <button class="auth-tab${state.authMode === "login" ? " active" : ""}" onclick="setAuthMode('login')">Log in</button>
+      <button class="auth-tab${state.authMode === "signup" ? " active" : ""}" onclick="setAuthMode('signup')">Sign up</button>
+    </div>
+
+    <div class="auth-panel active">
+      <form onsubmit="return handleAuth(event)">
+        ${state.authMode === "signup" ? `
+        <div class="form-group">
+          <label for="authName">Full name</label>
+          <input type="text" id="authName" required>
+        </div>` : ""}
+        <div class="form-group">
+          <label for="authEmail">Email</label>
+          <input type="email" id="authEmail" required>
+        </div>
+        <div class="form-group">
+          <label for="authPassword">Password</label>
+          <input type="password" id="authPassword" minlength="4" required>
+        </div>
+        <button type="submit" class="auth-submit">${state.authMode === "login" ? "Log in" : "Create account"}</button>
+      </form>
+      <div class="auth-switch">
+        ${state.authMode === "login" ? `New to WearVibes? <button onclick="setAuthMode('signup')">Create an account</button>` : `Already a member? <button onclick="setAuthMode('login')">Log in</button>`}
+      </div>
+    </div>
+  `;
+}
+
+function setAuthMode(mode){
+  state.authMode = mode;
+  renderAccountModal();
+}
+
+function handleAuth(e){
+  e.preventDefault();
+  const email = document.getElementById("authEmail").value.trim();
+  const nameField = document.getElementById("authName");
+  const name = nameField ? nameField.value.trim() : email.split("@")[0];
+
+  state.user = { name: name || "WearVibes Member", email };
+  saveUser();
+  renderAccountModal();
+  showToast(state.authMode === "login" ? "Logged in successfully" : "Account created — welcome to WearVibes");
+  return false;
+}
+
+function logout(){
+  state.user = null;
+  saveUser();
+  renderAccountModal();
+  showToast("Logged out");
+}
+
+/* ============================================================
+   ORDERS
+============================================================ */
+
+function showOrders(){
+  const body = document.getElementById("ordersBody");
+
+  if(state.orders.length === 0){
+    body.innerHTML = `<div class="orders-empty">No orders yet. Once you place an order, it will show up here with live tracking.</div>`;
+  } else {
+    body.innerHTML = state.orders.slice().reverse().map(order => {
+      const stepIndex = ["Placed","Packed","Shipped","Delivered"].indexOf(order.status);
+      const progress = [10, 40, 70, 100][stepIndex] || 10;
+      return `
+      <div class="order-card">
+        <div class="order-top">
+          <div>
+            <div class="order-id">${order.id}</div>
+            <div class="order-date">${order.date}</div>
+          </div>
+          <div class="status">${order.status}</div>
+        </div>
+        <div class="order-items-preview">${order.items.map(i => `${i.name} (Size ${i.size} × ${i.qty})`).join(", ")}</div>
+        <div class="order-total">${formatPrice(order.total)} · ${order.payment}</div>
+        <div class="track">
+          <div class="track-line"><div class="track-progress" style="width:${progress}%"></div></div>
+          <div class="track-points">
+            <div class="track-point"><div class="point ${stepIndex >= 0 ? "done" : ""}"></div>Placed</div>
+            <div class="track-point"><div class="point ${stepIndex >= 1 ? "done" : ""}"></div>Packed</div>
+            <div class="track-point"><div class="point ${stepIndex >= 2 ? "done" : ""}"></div>Shipped</div>
+            <div class="track-point"><div class="point ${stepIndex >= 3 ? "done" : ""}"></div>Delivered</div>
+          </div>
+        </div>
+      </div>`;
+    }).join("");
+  }
+
+  openGenericModal("ordersModal");
+}
+
+/* ============================================================
+   CHECKOUT
+============================================================ */
+
+function openCheckout(){
+  if(state.cart.length === 0) return;
+  closeCart();
+  renderCheckoutForm();
+  openGenericModal("checkoutModal");
+}
+
+function renderCheckoutForm(){
+  const body = document.getElementById("checkoutModalBody");
+  const total = cartTotal();
+  const shipping = total >= 2999 ? 0 : 99;
+  const grand = total + shipping;
+
+  body.innerHTML = `
+    <div class="modal-title">Checkout</div>
+    <div class="checkout-layout">
+      <form id="checkoutForm" onsubmit="return placeOrder(event)" novalidate>
+
+        <div class="checkout-section-title">Contact</div>
+        <div class="form-group" data-field="fullName">
+          <label for="ckName">Full name</label>
+          <input type="text" id="ckName" value="${state.user ? state.user.name : ""}" required>
+          <div class="form-error">Please enter your full name.</div>
+        </div>
+        <div class="form-row">
+          <div class="form-group" data-field="email">
+            <label for="ckEmail">Email</label>
+            <input type="email" id="ckEmail" value="${state.user ? state.user.email : ""}" required>
+            <div class="form-error">Please enter a valid email.</div>
+          </div>
+          <div class="form-group" data-field="phone">
+            <label for="ckPhone">Phone</label>
+            <input type="tel" id="ckPhone" placeholder="10-digit mobile number" required>
+            <div class="form-error">Please enter a valid 10-digit phone number.</div>
+          </div>
+        </div>
+
+        <div class="checkout-section-title">Shipping address</div>
+        <div class="form-group" data-field="address">
+          <label for="ckAddress">Address</label>
+          <textarea id="ckAddress" required></textarea>
+          <div class="form-error">Please enter your address.</div>
+        </div>
+        <div class="form-row">
+          <div class="form-group" data-field="city">
+            <label for="ckCity">City</label>
+            <input type="text" id="ckCity" required>
+            <div class="form-error">Please enter your city.</div>
+          </div>
+          <div class="form-group" data-field="state">
+            <label for="ckState">State</label>
+            <input type="text" id="ckState" required>
+            <div class="form-error">Please enter your state.</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group" data-field="pincode">
+            <label for="ckPincode">Pincode</label>
+            <input type="text" id="ckPincode" placeholder="6-digit pincode" required>
+            <div class="form-error">Please enter a valid 6-digit pincode.</div>
+          </div>
+          <div class="form-group">
+            <label for="ckCountry">Country</label>
+            <input type="text" id="ckCountry" value="India" disabled>
+          </div>
+        </div>
+
+        <div class="checkout-section-title">Payment method</div>
+        <div class="payment-options">
+          <label class="payment-option"><input type="radio" name="payment" value="UPI" checked> UPI / Google Pay / PhonePe</label>
+          <label class="payment-option"><input type="radio" name="payment" value="Card"> Credit / Debit Card</label>
+          <label class="payment-option"><input type="radio" name="payment" value="COD"> Cash on Delivery</label>
+        </div>
+
+      </form>
+
+      <div class="order-summary">
+        <h4>Order Summary</h4>
+        ${state.cart.map(item => {
+          const p = findProduct(item.id);
+          return `<div class="summary-item"><span>${p.name} (${item.size}) × ${item.qty}</span><span>${formatPrice(p.price * item.qty)}</span></div>`;
+        }).join("")}
+        <div class="summary-item"><span>Subtotal</span><span>${formatPrice(total)}</span></div>
+        <div class="summary-item"><span>Shipping</span><span>${shipping === 0 ? "Free" : formatPrice(shipping)}</span></div>
+        <div class="summary-item" style="font-weight:600;border-bottom:none"><span>Total</span><span>${formatPrice(grand)}</span></div>
+        <button class="place-order-btn" type="submit" form="checkoutForm">Place order — ${formatPrice(grand)}</button>
+      </div>
+    </div>
+  `;
+}
+
+function validateField(id, testFn){
+  const input = document.getElementById(id);
+  const group = input.closest(".form-group");
+  const valid = testFn(input.value.trim());
+  group.classList.toggle("invalid", !valid);
+  return valid;
+}
+
+function placeOrder(e){
+  e.preventDefault();
+
+  const checks = [
+    validateField("ckName", v => v.length > 1),
+    validateField("ckEmail", v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)),
+    validateField("ckPhone", v => /^[0-9]{10}$/.test(v)),
+    validateField("ckAddress", v => v.length > 4),
+    validateField("ckCity", v => v.length > 1),
+    validateField("ckState", v => v.length > 1),
+    validateField("ckPincode", v => /^[0-9]{6}$/.test(v))
+  ];
+
+  if(checks.includes(false)){
+    document.querySelector(".form-group.invalid").scrollIntoView({ behavior:"smooth", block:"center" });
+    return false;
+  }
+
+  const payment = document.querySelector('input[name="payment"]:checked').value;
+  const total = cartTotal();
+  const shipping = total >= 2999 ? 0 : 99;
+
+  const order = {
+    id: "WearVibes" + Math.floor(100000 + Math.random() * 899999),
+    date: new Date().toLocaleDateString("en-IN", { day:"numeric", month:"short", year:"numeric" }),
+    items: state.cart.map(item => {
+      const p = findProduct(item.id);
+      return { name: p.name, size: item.size, qty: item.qty, price: p.price };
+    }),
+    total: total + shipping,
+    payment,
+    status: "Placed"
+  };
+
+  state.orders.push(order);
+  saveOrders();
+
+  state.cart = [];
+  saveCart();
+  updateCartUI();
+
+  renderConfirmation(order);
+  return false;
+}
+
+function renderConfirmation(order){
+  const body = document.getElementById("checkoutModalBody");
+  body.innerHTML = `
+    <div class="confirm-wrap">
+      <div class="confirm-icon">✓</div>
+      <h3>Order placed</h3>
+      <p>Order ${order.id} · ${formatPrice(order.total)} · ${order.payment}</p>
+      <p>A confirmation email is on its way. You can track this order anytime from your account.</p>
+      <div class="confirm-actions">
+        <button class="secondary" onclick="closeModal('checkoutModal')">Continue shopping</button>
+        <button class="primary" onclick="closeModal('checkoutModal'); showOrders()">Track order</button>
+      </div>
+    </div>
+  `;
+}
+
+/* ============================================================
+   NEWSLETTER
+============================================================ */
+
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("newsletterForm");
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    form.reset();
+    showToast("You're subscribed — welcome to the list.");
+  });
+});
+
+/* ============================================================
+   MOBILE MENU
+============================================================ */
+
+function openMobileMenu(){
+  document.getElementById("mobileNav").classList.add("active");
+  document.body.classList.add("locked");
+}
+
+function closeMobileMenu(){
+  document.getElementById("mobileNav").classList.remove("active");
+  document.body.classList.remove("locked");
+}
+
+/* ============================================================
+   SCROLL TOP + HEADER
+============================================================ */
+
+window.addEventListener("scroll", () => {
+  const btn = document.getElementById("scrollTopBtn");
+  if(window.scrollY > 700){
+    btn.classList.add("show");
+  } else {
+    btn.classList.remove("show");
+  }
+}, { passive:true });
+
+/* ============================================================
+   GSAP SCROLL ANIMATIONS
+============================================================ */
+
+function initScrollAnimations(){
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(reduce || typeof gsap === "undefined") return;
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  gsap.utils.toArray(".reveal-item img, .category-card img").forEach(img => {
+    gsap.fromTo(img, { scale:1.18 }, {
+      scale:1,
+      ease:"none",
+      scrollTrigger:{
+        trigger: img,
+        start:"top bottom",
+        end:"bottom top",
+        scrub:true
+      }
+    });
+  });
+
+  gsap.utils.toArray(".intro h2, .section-title, .reveal-intro h2, .banner-content h2").forEach(el => {
+    gsap.fromTo(el, { y:40, opacity:0 }, {
+      y:0, opacity:1, duration:1, ease:"power3.out",
+      scrollTrigger:{ trigger: el, start:"top 88%" }
+    });
+  });
+}
+
+/* ============================================================
+   HERO INTRO ANIMATION
+============================================================ */
+
+function playHeroIntro(){
+  if(typeof gsap === "undefined") return;
+  gsap.from(".hero-title span i", {
+    y:"100%", duration:1, ease:"power4.out", stagger:0.08, delay:0.15
+  });
+  gsap.from(".hero-kicker, .hero-description, .hero-cta", {
+    opacity:0, y:20, duration:0.9, ease:"power2.out", stagger:0.08, delay:0.5
+  });
+}
+
+/* ============================================================
+   INIT
+============================================================ */
+
+function init(){
+  loadState();
+  renderFilterBar();
+  renderProducts();
+  updateCartUI();
+  updateWishlistCount();
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  initScrollAnimations();
+
+  // Loader
+  const loader = document.getElementById("loader");
+  const loaderBar = document.getElementById("loaderBar");
+  if(typeof gsap !== "undefined"){
+    gsap.to(loaderBar, { width:"100%", duration:0.9, ease:"power2.inOut" });
+  } else {
+    loaderBar.style.width = "100%";
+  }
+  setTimeout(() => {
+    loader.classList.add("hidden");
+    playHeroIntro();
+  }, 1000);
+
+  // Escape key closes drawers/modals
+  document.addEventListener("keydown", (e) => {
+    if(e.key === "Escape"){
+      closeCart();
+      closeMobileMenu();
+      document.querySelectorAll(".modal.active").forEach(m => closeModal(m.id));
+    }
+  });
+}
+
+if(document.readyState === "loading"){
+  document.addEventListener("DOMContentLoaded", init);
+} else {
+  init();
+}
+
+  </script>
+
+  <script>
+    // WearVibes V2 polish layer: header state + richer motion without changing storefront logic.
+    (function(){
+      const header = document.getElementById("siteHeader");
+      const heroBg = document.querySelector(".hero-bg");
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      function syncHeader(){
+        if(!header) return;
+        header.classList.toggle("scrolled", window.scrollY > 70);
+      }
+      window.addEventListener("scroll", syncHeader, {passive:true});
+      syncHeader();
+
+      if(!reduce && heroBg && typeof gsap !== "undefined"){
+        gsap.to(heroBg,{
+          yPercent:10,
+          ease:"none",
+          scrollTrigger:{trigger:".hero",start:"top top",end:"bottom top",scrub:true}
+        });
+      }
+
+      const newsletter = document.getElementById("newsletterForm");
+      if(newsletter && !newsletter.dataset.WearVibesV2){
+        newsletter.dataset.WearVibesV2 = "1";
+        newsletter.addEventListener("submit",function(e){
+          e.preventDefault();
+          newsletter.reset();
+          if(typeof showToast === "function") showToast("You're on the list — welcome to WearVibes.");
+        });
+      }
+
+      document.addEventListener("click",function(e){
+        const card = e.target.closest(".product");
+        if(!card) return;
+        card.classList.add("product-touched");
+        setTimeout(()=>card.classList.remove("product-touched"),450);
+      });
+    })();
+  </script>
+
+  <script>
+    /* ============================================================
+       WearVibes V2.1 — customer care + accurate catalog images
+    ============================================================ */
+
+    // Category-specific catalog photography. Each product now uses imagery
+    // that matches the garment category instead of recycling unrelated shots.
+    const WearVibes_CATEGORY_IMAGES = {
+      Sarees: [
+        "https://img.tatacliq.com/images/i28/1348Wx2000H/MP000000028999483_1348Wx2000H_202511010155333.jpeg",
+        "https://images.unsplash.com/photo-1583391733981-849840d0c4b1?auto=format&fit=crop&w=1200&q=90"
+      ],
+      Suits: [
+        "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=1100&q=88",
+        "https://www.anantexports.in/cdn/shop/files/IMG-20250224_021044.jpg?v=1774824773&width=1100"
+      ],
+      Lehengas: [
+        "https://manyavar.scene7.com/is/image/manyavar/UL5328-436-SEA%2BGREEN-3-101_05-02-2026-10-16%3A650x900",
+        "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1200&q=90"
+      ],
+      Kurtis: [
+        "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=1100&q=88",
+        "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=1200&q=90"
+      ],
+      Dresses: [
+        "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=1200&q=90",
+        "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&w=1200&q=90"
+      ],
+      "Coord Sets": [
+        "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=90",
+        "https://images.unsplash.com/photo-1485968579580-b6d095142e6e?auto=format&fit=crop&w=1200&q=90"
+      ]
+    };
+
+    // Guarantee category-filtered results and category-appropriate photos.
+    function normalizeWearVibesCatalog(){
+      if(!Array.isArray(PRODUCTS)) return;
+      const counters = {};
+      PRODUCTS.forEach(p => {
+        const imgs = WearVibes_CATEGORY_IMAGES[p.category] || [];
+        counters[p.category] = counters[p.category] || 0;
+        if(imgs.length){
+          const n = counters[p.category]++ % imgs.length;
+          p.img = imgs[n];
+          p.img2 = imgs[(n + 1) % imgs.length];
+        }
+        p.searchTerms = [
+          p.name, p.category,
+          p.category === "Sarees" ? "saree sari" : "",
+          p.category === "Suits" ? "salwar kameez anarkali suit" : "",
+          p.category === "Lehengas" ? "lehenga bridal" : "",
+          p.category === "Kurtis" ? "kurti" : "",
+          p.category === "Dresses" ? "dress gown" : "",
+          p.category === "Coord Sets" ? "coord co ord set" : ""
+        ].join(" ").toLowerCase();
+      });
+    }
+    normalizeWearVibesCatalog();
+
+    // Search is intentionally category-aware. Searching "saree" can never
+    // return a suit, lehenga, kurti, dress or co-ord set.
+    window.runSearch = function(query){
+      const q = query.trim().toLowerCase();
+      const results = document.getElementById("searchResults");
+      const empty = document.getElementById("searchEmpty");
+      if(!q){
+        results.innerHTML = "";
+        empty.style.display = "none";
+        return;
+      }
+
+      const tokens = q.split(/\s+/).filter(Boolean);
+      let matches = PRODUCTS.filter(p => {
+        const hay = p.searchTerms || (p.name + " " + p.category).toLowerCase();
+        return tokens.every(t => hay.includes(t));
+      });
+
+      // Strong category intent wins over loose name matching.
+      const categoryMap = [
+        ["saree","Sarees"],["sari","Sarees"],
+        ["suit","Suits"],["salwar","Suits"],["anarkali","Suits"],
+        ["lehenga","Lehengas"],["lehng","Lehengas"],
+        ["kurti","Kurtis"],["kurtis","Kurtis"],
+        ["dress","Dresses"],["gown","Dresses"],
+        ["coord","Coord Sets"],["co-ord","Coord Sets"],["set","Coord Sets"]
+      ];
+      const intent = categoryMap.find(([word]) => q.includes(word));
+      if(intent) matches = PRODUCTS.filter(p => p.category === intent[1]);
+
+      document.querySelector("#searchModal .modal-title").textContent = "Search";
+      document.getElementById("searchSuggestionsWrap").style.display = "";
+      if(!matches.length){
+        results.innerHTML = "";
+        empty.style.display = "block";
+      }else{
+        empty.style.display = "none";
+        results.innerHTML = matches.map(renderSearchResult).join("");
+      }
+    };
+
+    // Rich information panels.
+    const WearVibes_INFO = {
+      shipping: {
+        eyebrow:"Customer care / 01",
+        title:"Shipping & delivery",
+        lead:"We keep delivery simple, transparent and easy to follow from the moment your order is placed.",
+        blocks:[
+          ["Dispatch","Ready-to-ship pieces are usually dispatched within 1–2 business days. Made-to-order pieces may take longer; the estimated timeline is shown at checkout or in your order confirmation."],
+          ["Delivery","Standard delivery across India generally takes 3–6 business days after dispatch. Remote locations may require additional time."],
+          ["Shipping fee","Complimentary shipping on orders above ₹2,999. Orders below ₹2,999 carry a flat ₹99 delivery fee."],
+          ["Order updates","Once your order is placed, your order number appears in the confirmation. Use Track my order to view its status and progress."],
+          ["Delivery notes","Please provide a complete address, nearby landmark and reachable phone number. If a courier attempt fails, the carrier may reschedule delivery."],
+          ["International","International delivery availability and charges can vary by destination. Contact WearVibes before ordering if you need an international shipment."]
+        ]
+      },
+      returns: {
+        eyebrow:"Customer care / 02",
+        title:"Returns & exchanges",
+        lead:"We want every WearVibes piece to feel right. If it doesn't, our straightforward return and exchange process is here to help.",
+        blocks:[
+          ["7-day window","Eligible full-price garments can be requested for return or exchange within 7 days of delivery."],
+          ["Condition","Items must be unworn, unwashed, unaltered and returned with original tags, packaging and accessories."],
+          ["Non-returnable","Customised, altered, made-to-measure, intimate, damaged or final-sale items may not be eligible for return or exchange."],
+          ["Exchange","Choose another available size of the same piece where possible. If the requested size is unavailable, a return may be offered instead."],
+          ["Refunds","After the returned item passes inspection, the refund is initiated to the original payment method. Bank/payment-provider processing time may vary."],
+          ["Start a request","Keep your order number and delivery details ready. Contact WearVibes customer care with photos if the item arrived damaged or incorrect."]
+        ]
+      }
+    };
+
+    function renderInfo(type){
+      const data = WearVibes_INFO[type];
+      const body = document.getElementById("infoModalBody");
+      body.innerHTML = `
+        <div class="policy-hero">
+          <div class="policy-eyebrow">${data.eyebrow}</div>
+          <h2>${data.title}</h2>
+          <p class="policy-lead">${data.lead}</p>
+        </div>
+        <div class="policy-grid">
+          ${data.blocks.map(b => `<div class="policy-block"><h3>${b[0]}</h3><p>${b[1]}</p></div>`).join("")}
+        </div>
+        <div class="policy-foot">These policies are presented as the WearVibes storefront policy for this demo. Connect your live courier, CRM and returns system before production launch.</div>
+      `;
+      openGenericModal("infoModal");
+    }
+
+    window.openInfoToast = function(label){
+      const l = String(label).toLowerCase();
+      if(l.includes("shipping")) return renderInfo("shipping");
+      if(l.includes("return")) return renderInfo("returns");
+      if(l.includes("size")) return openSizeGuide();
+      if(l.includes("track")) return openTracking();
+      showToast(label + " — WearVibes customer care will be added here.");
+    };
+
+    window.openSizeGuide = function(){
+      const body = document.getElementById("infoModalBody");
+      body.innerHTML = `
+        <div class="policy-hero">
+          <div class="policy-eyebrow">Customer care / 03</div>
+          <h2>Size guide</h2>
+          <p class="policy-lead">Use your body measurements rather than your usual high-street size. For sarees, “One Size” refers to the saree itself; blouse sizing may vary by product.</p>
+        </div>
+        <div class="measure-grid">
+          <div class="measure-card"><strong>Bust</strong><span>Measure around the fullest part of your bust, keeping the tape level.</span></div>
+          <div class="measure-card"><strong>Waist</strong><span>Measure around your natural waist without pulling the tape tight.</span></div>
+          <div class="measure-card"><strong>Hip</strong><span>Measure around the fullest part of your hips while standing naturally.</span></div>
+        </div>
+        <div class="size-table-wrap">
+          <table class="size-table">
+            <thead><tr><th>WearVibes size</th><th>Bust (in)</th><th>Waist (in)</th><th>Hip (in)</th><th>Best for</th></tr></thead>
+            <tbody>
+              <tr><td>XS</td><td>32–33</td><td>25–26</td><td>35–36</td><td>Petite fits</td></tr>
+              <tr><td>S</td><td>34–35</td><td>27–28</td><td>37–38</td><td>Small fits</td></tr>
+              <tr><td>M</td><td>36–37</td><td>29–30</td><td>39–40</td><td>Regular fits</td></tr>
+              <tr><td>L</td><td>38–39</td><td>31–32</td><td>41–42</td><td>Relaxed fits</td></tr>
+              <tr><td>XL</td><td>40–41</td><td>33–34</td><td>43–44</td><td>Extended fits</td></tr>
+              <tr><td>XXL</td><td>42–44</td><td>35–37</td><td>45–47</td><td>Extended fits</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="policy-foot">Fit can vary by silhouette and fabric. Always check the individual product's available sizes before adding it to your bag. If you are between sizes, choose based on the garment's intended fit or contact WearVibes customer care.</div>
+      `;
+      openGenericModal("infoModal");
+    };
+
+    window.openTracking = function(){
+      document.getElementById("trackingInput").value = "";
+      document.getElementById("trackingResult").innerHTML = "";
+      openGenericModal("trackingModal");
+      setTimeout(()=>document.getElementById("trackingInput").focus(),120);
+    };
+
+    window.trackOrder = function(e){
+      e.preventDefault();
+      const input = document.getElementById("trackingInput");
+      const query = input.value.trim().toUpperCase();
+      const result = document.getElementById("trackingResult");
+      const order = state.orders.find(o => String(o.id).toUpperCase() === query);
+
+      if(!order){
+        result.innerHTML = `<div class="tracking-error"><strong>Order not found.</strong><br>Please check the order number and try again. Your order number begins with “WearVibes”.</div>`;
+        return false;
+      }
+
+      const labels = ["Placed","Packed","Shipped","Delivered"];
+      const step = Math.max(0, labels.indexOf(order.status));
+      const progress = [10,40,70,100][step] || 10;
+      result.innerHTML = `
+        <div class="tracking-result-card">
+          <div class="tracking-result-top">
+            <div><div class="tracking-result-id">${order.id}</div><div class="tracking-result-date">Placed ${order.date}</div></div>
+            <div class="tracking-status">${order.status}</div>
+          </div>
+          <div class="tracking-progress"><span style="width:${progress}%"></span></div>
+          <div class="tracking-steps">
+            ${labels.map((label,i)=>`<div class="tracking-step ${i<=step?"done":""}"><div class="dot"></div>${label}</div>`).join("")}
+          </div>
+          <div class="tracking-items">${order.items.map(i=>`${i.name} · Size ${i.size} × ${i.qty}`).join("<br>")}</div>
+        </div>`;
+      return false;
+    };
+
+    // Account -> orders remains available, but the dedicated footer tracker is now
+    // separate and can find an order directly by its order number.
+    const oldShowOrders = window.showOrders;
+    window.showOrders = function(){
+      if(typeof oldShowOrders === "function") oldShowOrders();
+      // no extra behavior; retained for account order history.
+    };
+
+    // Ensure the correct category image appears in the modal too.
+    const originalOpenProductModal = window.openProductModal;
+    window.openProductModal = function(id){
+      normalizeWearVibesCatalog();
+      return originalOpenProductModal(id);
+    };
+
+    // Make category buttons and footer links open the same polished panels.
+    document.addEventListener("click", function(e){
+      const btn = e.target.closest("button");
+      if(!btn) return;
+      const text = btn.textContent.trim().toLowerCase();
+      if(text === "shipping & delivery"){
+        e.preventDefault(); renderInfo("shipping");
+      } else if(text === "returns & exchanges"){
+        e.preventDefault(); renderInfo("returns");
+      } else if(text === "size guide"){
+        e.preventDefault(); openSizeGuide();
+      }
+    });
+
+    // Correct the collection count dynamically.
+    function updateCollectionCount(){
+      const el = document.querySelector(".collection-count");
+      if(!el) return;
+      const count = state.filter === "All" ? PRODUCTS.length : PRODUCTS.filter(p=>p.category===state.filter).length;
+      el.textContent = `${count} ${count === 1 ? "piece" : "pieces"} · designed in India`;
+    }
+    const oldSetFilter = window.setFilter;
+    window.setFilter = function(cat){
+      oldSetFilter(cat);
+      updateCollectionCount();
+    };
+
+    // Initial correction after the original init has rendered the page.
+    setTimeout(()=>{
+      normalizeWearVibesCatalog();
+      if(typeof renderProducts === "function") renderProducts();
+      updateCollectionCount();
+    },50);
+  </script>
+
+
+  <script>
+    /* ============================================================
+       WearVibes V3 — WEARVIBES BRAND PAGES + CONTACT
+    ============================================================ */
+    const WEARVIBES_PAGE_COPY = {
+      story: {
+        eyebrow:"WearVibes / Our story",
+        title:"Indian craft. A modern point of view.",
+        lead:"WearVibes is a fashion storefront concept celebrating expressive Indian occasionwear and everyday style. The collection brings together traditional silhouettes, thoughtful details and contemporary styling in one easy-to-explore destination.",
+        blocks:[
+          ["Rooted in craft","Discover looks inspired by the colour, texture and detail of Indian dressing."],
+          ["Made for your moments","Explore festive outfits, easy everyday pieces and modern silhouettes for different occasions."],
+          ["Style with confidence","Product descriptions, size options and a virtual try-on experience help you explore a look before making a choice."],
+          ["A brand in progress","WearVibes is being developed as a digital-first fashion experience, with room to grow into a full commerce platform."]
+        ]
+      },
+      sustainability: {
+        eyebrow:"WearVibes / Conscious style",
+        title:"Buy thoughtfully. Wear longer.",
+        lead:"We believe better fashion experiences start with informed choices. This section shares the principles WearVibes aims to build into its future collections and operations.",
+        blocks:[
+          ["Choose versatile pieces","Look for garments that can be styled across more than one occasion."],
+          ["Care for every garment","Follow garment-specific washing and storage instructions to help clothing last longer."],
+          ["Reduce unnecessary waste","Plan collections and packaging carefully as the brand and fulfilment process develop."],
+          ["Be transparent","Product materials, origin and care information should be published only when verified."],
+          ["Keep improving","Responsible sourcing and supplier standards are goals to formalise as the business grows."]
+        ]
+      },
+      careers: {
+        eyebrow:"WearVibes / Careers",
+        title:"Help shape the next look.",
+        lead:"WearVibes is a developing fashion and technology concept. As the project grows, it can bring together people across design, digital experiences and customer care.",
+        blocks:[
+          ["Creative","Styling, collection development, photography and visual direction."],
+          ["Digital","E-commerce, frontend engineering, merchandising and analytics."],
+          ["Brand","Content, social media, partnerships and community."],
+          ["Get in touch","Use the contact section to prepare an enquiry. Replace the placeholder email address with your official business address before launch."]
+        ]
+      }
+    };
+
+    function openInfoPage(type){
+      const data = WEARVIBES_PAGE_COPY[type];
+      if(!data) return;
+      const body = document.getElementById("infoModalBody");
+      body.innerHTML = `
+        <div class="policy-hero">
+          <div class="policy-eyebrow">${data.eyebrow}</div>
+          <h2>${data.title}</h2>
+          <p class="policy-lead">${data.lead}</p>
+        </div>
+        <div class="policy-grid">
+          ${data.blocks.map(b => `<div class="policy-block"><h3>${b[0]}</h3><p>${b[1]}</p></div>`).join("")}
+        </div>
+        <div class="policy-links">
+          <button onclick="closeModal('infoModal');document.getElementById('${type}').scrollIntoView({behavior:'smooth'})">Back to section ↗</button>
+        </div>
+      `;
+      openGenericModal("infoModal");
+    }
+
+    const contactForm = document.getElementById("contactForm");
+    if(contactForm){
+      contactForm.addEventListener("submit", function(e){
+        e.preventDefault();
+        const name = document.getElementById("contactName").value.trim();
+        const email = document.getElementById("contactEmail").value.trim();
+        const topic = document.getElementById("contactTopic").value;
+        const message = document.getElementById("contactMessage").value.trim();
+        if(!name || !email || !message){
+          showToast("Please complete all required fields.");
+          return;
+        }
+        const subject = encodeURIComponent(topic + " — WearVibes enquiry from " + name);
+        const body = encodeURIComponent(
+          "Name: " + name + "\n" +
+          "Email: " + email + "\n" +
+          "Topic: " + topic + "\n\n" +
+          message
+        );
+        window.location.href = "mailto:hello@wearvibes.example?subject=" + subject + "&body=" + body;
+        contactForm.reset();
+        showToast("Your email draft is ready.");
+      });
+    }
+
+    // Smooth-scroll header links without changing the storefront's existing behaviour.
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener("click", function(e){
+        const id = this.getAttribute("href");
+        const el = document.querySelector(id);
+        if(!el) return;
+        e.preventDefault();
+        el.scrollIntoView({behavior:"smooth", block:"start"});
+      });
+    });
+  
+
+/* ============================================================
+   WearVibes REAL AI VIRTUAL TRY-ON ENGINE
+   Frontend talks only to the WearVibes FastAPI backend.
+============================================================ */
+const FIT_STUDIO = {
+  productId: 1,
+  body: "hourglass",
+  bust: 34,
+  waist: 28,
+  hip: 36,
+  photoFile: null,
+  photoUrl: null,
+  generating: false
+};
+
+const BODY_TYPES = [
+  {id:"hourglass",name:"Hourglass",hint:"Balanced proportions"},
+  {id:"pear",name:"Pear",hint:"Hip-led silhouette"},
+  {id:"rectangle",name:"Rectangle",hint:"Straighter frame"},
+  {id:"apple",name:"Apple",hint:"Mid-led silhouette"},
+  {id:"inverted",name:"Inverted",hint:"Shoulder-led"}
+];
+const FIT_DRESS_IDS = [1,2,3,6,9,13,14];
+function fitEscape(v){return String(v).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]));}
+function fitProduct(id){return typeof findProduct==='function'?findProduct(id):null;}
+function fitBodySVG(type){
+  const widths={hourglass:[42,54,42],pear:[39,61,54],rectangle:[46,48,47],apple:[58,56,49],inverted:[59,49,39]};
+  const w=widths[type]||widths.hourglass;
+  return `<svg viewBox="0 0 100 150" aria-hidden="true"><circle cx="50" cy="18" r="10" fill="#c99270"/><path d="M46 28 Q${50-w[0]/2} 32 50 65 Q${50-w[1]/2} 73 50 91 Q${50-w[2]/2} 101 43 129 M54 28 Q${50+w[0]/2} 32 50 65 Q${50+w[1]/2} 73 50 91 Q${50+w[2]/2} 101 57 129" fill="none" stroke="#c99270" stroke-width="7" stroke-linecap="round"/><path d="M43 129 L39 145 M57 129 L61 145" stroke="#c99270" stroke-width="5" stroke-linecap="round"/></svg>`;
+}
+function initFitStudio(){
+  const dressGrid=document.getElementById("fitDressGrid"), bodyGrid=document.getElementById("fitBodyGrid");
+  if(!dressGrid||!bodyGrid)return;
+  dressGrid.innerHTML=FIT_DRESS_IDS.map(id=>{const p=fitProduct(id);if(!p)return '';return `<button type="button" class="fit-dress${id===FIT_STUDIO.productId?' active':''}" data-fit-product="${id}"><img src="${p.img}" alt="${fitEscape(p.name)}" loading="lazy"><span class="fit-dress-name">${fitEscape(p.name)}</span></button>`}).join('');
+  bodyGrid.innerHTML=BODY_TYPES.map(b=>`<button type="button" class="fit-body${b.id===FIT_STUDIO.body?' active':''}" data-body="${b.id}">${fitBodySVG(b.id)}<span>${b.name}</span><small>${b.hint}</small></button>`).join('');
+  dressGrid.querySelectorAll('[data-fit-product]').forEach(btn=>btn.addEventListener('click',()=>{FIT_STUDIO.productId=Number(btn.dataset.fitProduct);dressGrid.querySelectorAll('.fit-dress').forEach(x=>x.classList.toggle('active',x===btn));renderFitMeta();}));
+  bodyGrid.querySelectorAll('[data-body]').forEach(btn=>btn.addEventListener('click',()=>{FIT_STUDIO.body=btn.dataset.body;bodyGrid.querySelectorAll('.fit-body').forEach(x=>x.classList.toggle('active',x===btn));renderFitMeta();}));
+  ['fitBust','fitWaist','fitHip'].forEach((id,i)=>document.getElementById(id)?.addEventListener('input',()=>{FIT_STUDIO[['bust','waist','hip'][i]]=Number(document.getElementById(id).value)||[34,28,36][i];}));
+  document.getElementById('fitPhotoInput')?.addEventListener('change',handleFitPhoto);
+  document.getElementById('fitAiRemovePhoto')?.addEventListener('click',removeFitPhoto);
+  document.getElementById('applyFitBtn')?.addEventListener('click',generateAITryOn);
+  document.getElementById('fitAiRetry')?.addEventListener('click',generateAITryOn);
+  document.getElementById('fitResetBtn')?.addEventListener('click',resetFitStudio);
+  renderFitMeta();
+}
+function renderFitMeta(){
+  const p=fitProduct(FIT_STUDIO.productId), b=BODY_TYPES.find(x=>x.id===FIT_STUDIO.body);
+  if(!p)return;
+  document.getElementById('fitLookName').textContent=p.name;
+  document.getElementById('fitLookMeta').textContent=`${p.category} · ${b?.name||'Custom'} style profile · AI try-on`;
+  document.getElementById('fitPreviewBadge').textContent=FIT_STUDIO.photoFile?'Photo ready':'Ready for try-on';
+}
+function handleFitPhoto(e){
+  const file=e.target.files?.[0]; if(!file)return;
+  const allowed=['image/jpeg','image/png','image/webp'];
+  if(!allowed.includes(file.type)){setFitError('Please choose a JPG, PNG or WEBP image.');e.target.value='';return;}
+  if(file.size>10*1024*1024){setFitError('Please choose an image under 10 MB.');e.target.value='';return;}
+  if(FIT_STUDIO.photoUrl)URL.revokeObjectURL(FIT_STUDIO.photoUrl);
+  FIT_STUDIO.photoFile=file;FIT_STUDIO.photoUrl=URL.createObjectURL(file);
+  document.getElementById('fitAiFileThumb').src=FIT_STUDIO.photoUrl;
+  document.getElementById('fitAiFileName').textContent=file.name;
+  document.getElementById('fitAiFileMeta').textContent=`${(file.size/1024/1024).toFixed(1)} MB · ready for AI`;
+  document.getElementById('fitAiFile').hidden=false;
+  document.getElementById('fitAiEmpty').style.display='none';
+  document.getElementById('fitPreviewBadge').textContent='Photo ready';
+  clearFitError();
+}
+function removeFitPhoto(){
+  if(FIT_STUDIO.photoUrl)URL.revokeObjectURL(FIT_STUDIO.photoUrl);
+  FIT_STUDIO.photoFile=null;FIT_STUDIO.photoUrl=null;
+  const input=document.getElementById('fitPhotoInput');if(input)input.value='';
+  document.getElementById('fitAiFile').hidden=true;document.getElementById('fitAiEmpty').style.display='';
+  document.getElementById('fitPreviewBadge').textContent='Ready for try-on';
+}
+function setFitProgress(percent,title,step){
+  document.getElementById('fitAiProgressBar').style.width=`${percent}%`;
+  document.getElementById('fitAiLoadingTitle').textContent=title;
+  document.getElementById('fitAiLoadingStep').textContent=step;
+}
+function setFitError(message){const el=document.getElementById('fitAiError');el.textContent=message;el.hidden=false;}
+function clearFitError(){const el=document.getElementById('fitAiError');el.textContent='';el.hidden=true;}
+function setFitLoading(on){
+  document.getElementById('fitAiLoading').hidden=!on;
+  document.getElementById('fitAiEmpty').style.display=on?'none':'';
+  document.getElementById('fitAiResult').hidden=on;
+  document.getElementById('fitAiResultActions').hidden=true;
+  document.getElementById('applyFitBtn').disabled=on;
+  FIT_STUDIO.generating=on;
+}
+async function generateAITryOn(){
+  if(FIT_STUDIO.generating)return;
+  clearFitError();
+  if(!FIT_STUDIO.photoFile){setFitError('Upload your photo first. A real AI try-on needs your image as the model input.');return;}
+  const product=fitProduct(FIT_STUDIO.productId);if(!product){setFitError('The selected product could not be found.');return;}
+  const form=new FormData();form.append('photo',FIT_STUDIO.photoFile);form.append('product_id',String(product.id));form.append('product_name',product.name);form.append('product_category',product.category);form.append('product_image',product.img);form.append('body_type',FIT_STUDIO.body);form.append('bust',String(FIT_STUDIO.bust||''));form.append('waist',String(FIT_STUDIO.waist||''));form.append('hip',String(FIT_STUDIO.hip||''));form.append('generation_mode','balanced');form.append('resolution','1k');form.append('quality_profile','high_fidelity');form.append('preserve_identity','true');form.append('preserve_pose','true');form.append('preserve_garment_design','true');form.append('preserve_pattern_and_embroidery','true');form.append('lighting_match','automatic');form.append('image_guidance','Keep the uploaded person and pose consistent; transfer the exact selected catalog garment, including silhouette, color, print, embroidery, neckline, sleeves, borders and fabric texture. Avoid redesigning the garment or adding accessories.');
+  setFitLoading(true);setFitProgress(12,'Preparing your try-on…','Validating your photo and selected garment');
+  try{
+    await new Promise(r=>setTimeout(r,500));setFitProgress(28,'Reading the garment…','Matching the exact selected WearVibes catalog piece');
+    const response=await fetch('/api/try-on',{method:'POST',body:form});
+    setFitProgress(70,'AI is styling your look…','Preserving your pose, identity and garment details');
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(data.detail||data.message||'The AI try-on request failed.');
+    setFitProgress(94,'Finishing your look…','Rendering the final virtual fitting result');
+    const image=data.image_url||data.image;
+    if(!image)throw new Error('The AI provider returned no image. Please try again.');
+    const img=document.getElementById('fitAiResult');img.src=image;img.hidden=false;
+    document.getElementById('fitAiStage').classList.add('is-result');
+    document.getElementById('fitPreviewBadge').textContent='AI result ready';
+    document.getElementById('fitScore').textContent='AI';document.getElementById('fitScoreLabel').textContent='virtual try-on';
+    document.getElementById('fitResultTitle').textContent='AI try-on generated successfully.';
+    document.getElementById('fitResultText').textContent=`${product.name} was rendered using your uploaded photo. Use the product size chart for purchase sizing; the visual result is not a guarantee of physical fit.`;
+    const before=document.getElementById('fitAiBefore');before.hidden=false;document.getElementById('fitAiBeforeImg').src=FIT_STUDIO.photoUrl;
+    const dl=document.getElementById('fitAiDownload');dl.href=image;
+    document.getElementById('fitAiResultActions').hidden=false;
+    setFitProgress(100,'Your AI try-on is ready.','Result generated');
+  }catch(err){setFitError(err.message||'Something went wrong while generating your try-on.');document.getElementById('fitPreviewBadge').textContent='Try-on failed';}
+  finally{setFitLoading(false);document.getElementById('fitAiLoading').hidden=true;}
+}
+function resetFitStudio(){
+  FIT_STUDIO.productId=1;FIT_STUDIO.body='hourglass';FIT_STUDIO.bust=34;FIT_STUDIO.waist=28;FIT_STUDIO.hip=36;
+  ['fitBust','fitWaist','fitHip'].forEach((id,i)=>document.getElementById(id).value=[34,28,36][i]);
+  document.querySelectorAll('.fit-dress').forEach(x=>x.classList.toggle('active',x.dataset.fitProduct==='1'));
+  document.querySelectorAll('.fit-body').forEach(x=>x.classList.toggle('active',x.dataset.body==='hourglass'));
+  removeFitPhoto();clearFitError();
+  const result=document.getElementById('fitAiResult');result.hidden=true;result.removeAttribute('src');
+  document.getElementById('fitAiBefore').hidden=true;document.getElementById('fitAiStage').classList.remove('is-result');
+  document.getElementById('fitAiEmpty').style.display='';document.getElementById('fitPreviewBadge').textContent='Ready for try-on';
+  document.getElementById('fitScore').textContent='—';document.getElementById('fitScoreLabel').textContent='AI status';
+  document.getElementById('fitResultTitle').textContent='AI will use your photo for the visual try-on.';
+  document.getElementById('fitResultText').textContent='Measurements are kept as optional sizing context and are not used to claim an exact fit.';
+  renderFitMeta();
+}
+window.addEventListener('beforeunload',()=>{if(FIT_STUDIO.photoUrl)URL.revokeObjectURL(FIT_STUDIO.photoUrl);});
+document.addEventListener('DOMContentLoaded',initFitStudio);
+</script>
+
+
+
+<!-- WearVibes EXPERIENCE UPGRADE: responsive polish, AI preflight and GSAP motion -->
+<style id="WearVibes-experience-upgrade">
+  :root { --WearVibes-motion: cubic-bezier(.2,.75,.25,1); }
+  html { scroll-padding-top: 90px; }
+  body { min-width: 320px; }
+  .fit-ai-studio { isolation:isolate; }
+  .fit-ai-stage { position:relative; overflow:hidden; }
+  .fit-ai-stage::after { content:""; position:absolute; inset:0; pointer-events:none; opacity:0; background:linear-gradient(180deg,transparent 0%,rgba(213,163,127,.10) 48%,transparent 54%); transform:translateY(-100%); }
+  .fit-ai-stage.is-scanning::after { opacity:1; animation:WearVibesScan 2.1s linear infinite; }
+  @keyframes WearVibesScan { to { transform:translateY(100%); } }
+  .fit-ai-upload, .fit-upload { transition:border-color .25s ease,background .25s ease,transform .25s ease; }
+  .fit-ai-upload.is-dragover, .fit-upload.is-dragover { border-color:#d5a37f!important; background:rgba(213,163,127,.10)!important; transform:scale(1.01); }
+  .fit-ai-file { min-width:0; }
+  .fit-ai-file img { object-fit:cover; }
+  .fit-ai-quality { display:flex;align-items:flex-start;gap:10px;margin-top:12px;padding:12px 13px;border:1px solid rgba(169,111,78,.22);background:rgba(169,111,78,.06);font-size:10px;line-height:1.6;color:var(--muted); }
+  .fit-ai-quality strong { display:block;color:var(--ink);font-size:10px;margin-bottom:2px; }
+  .fit-ai-quality .quality-dot { width:8px;height:8px;flex:0 0 8px;border-radius:50%;margin-top:5px;background:#55745c; }
+  .fit-ai-quality.warning .quality-dot { background:#b77936; }
+  .fit-ai-quality.error .quality-dot { background:#a44e45; }
+  .fit-ai-stage.is-result .fit-ai-result { animation:WearVibesResultIn .75s var(--WearVibes-motion) both; }
+  @keyframes WearVibesResultIn { from { opacity:0;transform:scale(.975);filter:blur(8px) } to { opacity:1;transform:scale(1);filter:blur(0) } }
+  .fit-dress:focus-visible,.fit-body:focus-visible,.fit-primary:focus-visible,.fit-secondary:focus-visible { outline:2px solid #a96f4e;outline-offset:3px; }
+  .fit-primary:disabled { opacity:.58;cursor:wait; }
+  .WearVibes-reveal { will-change:transform,opacity; }
+  @media(max-width:1050px) { .fit-studio-shell { grid-template-columns:minmax(0,1fr)!important; } .fit-preview { min-height:clamp(500px,72vw,700px); } .fit-controls { min-height:auto; } }
+  @media(max-width:650px) { .fit-preview { min-height:clamp(480px,135vw,620px); } .fit-ai-stage { min-height:360px; } .fit-ai-quality { font-size:11px; } .fit-control-head { gap:10px; } .fit-dress-name { font-size:8px; } .fit-body small { font-size:8px; } }
+  @media(max-width:380px) { .fit-preview-top { left:12px;right:12px;top:12px;gap:8px;align-items:flex-start; } .fit-preview-kicker { max-width:48%;line-height:1.5; } .fit-preview-badge { max-width:52%;text-align:center;line-height:1.4; } .fit-preview-caption { gap:8px; } .fit-look-name { font-size:24px; } }
+  @media(prefers-reduced-motion:reduce) { .fit-ai-stage.is-scanning::after { animation:none; } .fit-ai-stage.is-result .fit-ai-result { animation:none; } .WearVibes-reveal { opacity:1!important;transform:none!important; } }
+</style>
+<script id="WearVibes-experience-upgrade-js">
+(() => {
+  'use strict';
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function initWearVibesMotion() {
+    if (typeof window.gsap === 'undefined' || reducedMotion) return;
+    if (window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
+    document.querySelectorAll('.intro h2, .section-title, .section-head, .category-card, .product, .reveal-intro h2, .service, .brand-page-copy, .fit-studio-head, .fit-controls, .fit-preview').forEach((el) => {
+      if (el.dataset.motionReady) return;
+      el.dataset.motionReady = 'true'; el.classList.add('WearVibes-reveal');
+      gsap.fromTo(el, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: .8, ease: 'power3.out', scrollTrigger: window.ScrollTrigger ? { trigger: el, start: 'top 88%', once: true } : undefined });
+    });
+    gsap.utils.toArray('.fit-dress, .fit-body').forEach((el) => {
+      el.addEventListener('pointerenter', () => gsap.to(el, { y: -3, duration: .2, overwrite: true }));
+      el.addEventListener('pointerleave', () => gsap.to(el, { y: 0, duration: .25, overwrite: true }));
+    });
+  }
+
+  function setQuality(message, level='good') {
+    const box = document.getElementById('fitAiQuality'); if (!box) return;
+    box.className = `fit-ai-quality ${level}`;
+    box.querySelector('strong').textContent = level === 'warning' ? 'Photo tip' : level === 'error' ? 'Photo check' : 'Image pre-check';
+    box.querySelector('[data-quality-message]').textContent = message;
+  }
+
+  async function inspectImage(file) {
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    try {
+      const img = new Image();
+      const { width, height } = await new Promise((resolve, reject) => {
+        img.onload = () => resolve({ width: img.naturalWidth, height: img.naturalHeight });
+        img.onerror = () => reject(new Error('This image could not be opened. Try exporting it as JPG or PNG.'));
+        img.src = url;
+      });
+      if (width < 320 || height < 480) setQuality(`Image is ${width} × ${height}px. A larger, full-body image (at least 480px tall) usually gives the try-on model more visual detail.`, 'warning');
+      else if (width / height > 1.15) setQuality(`Image is ${width} × ${height}px. A portrait, front-facing photo with the full outfit area visible may improve garment placement.`, 'warning');
+      else setQuality(`Image is ${width} × ${height}px. Dimensions look suitable for a visual try-on. Keep the subject unobstructed and well lit.`, 'good');
+    } catch (err) { setQuality(err.message || 'Could not inspect this image.', 'error'); }
+    finally { URL.revokeObjectURL(url); }
+  }
+
+  function initDropZone() {
+    const zone = document.getElementById('fitUpload') || document.querySelector('.fit-ai-upload');
+    const input = document.getElementById('fitPhotoInput');
+    if (!zone || !input || zone.dataset.dropReady) return;
+    zone.dataset.dropReady = 'true';
+    ['dragenter','dragover'].forEach(type => zone.addEventListener(type, e => { e.preventDefault(); zone.classList.add('is-dragover'); }));
+    ['dragleave','drop'].forEach(type => zone.addEventListener(type, e => { e.preventDefault(); zone.classList.remove('is-dragover'); }));
+    zone.addEventListener('drop', e => {
+      const file = e.dataTransfer?.files?.[0]; if (!file) return;
+      try { const transfer = new DataTransfer(); transfer.items.add(file); input.files = transfer.files; input.dispatchEvent(new Event('change', { bubbles: true })); }
+      catch (_) { setQuality('Drag-and-drop is unavailable in this browser. Please use the photo picker.', 'warning'); }
+    });
+    input.addEventListener('change', () => inspectImage(input.files?.[0]));
+  }
+
+  function addQualityPanel() {
+    const upload = document.getElementById('fitUpload') || document.querySelector('.fit-ai-upload');
+    if (!upload || document.getElementById('fitAiQuality')) return;
+    const panel = document.createElement('div'); panel.id = 'fitAiQuality'; panel.className = 'fit-ai-quality';
+    panel.innerHTML = '<span class="quality-dot" aria-hidden="true"></span><div><strong>Image pre-check</strong><span data-quality-message>We will check image dimensions locally before sending your photo to the AI service.</span></div>';
+    const fileInfo = document.getElementById('fitAiFile'); (fileInfo || upload).insertAdjacentElement('afterend', panel);
+  }
+
+  function bindScanAnimation() {
+    ['applyFitBtn','fitAiRetry'].forEach(id => {
+      document.getElementById(id)?.addEventListener('click', () => {
+        const stage = document.getElementById('fitAiStage'); if (!stage) return;
+        stage.classList.add('is-scanning');
+        const stop = () => stage.classList.remove('is-scanning');
+        document.getElementById('fitAiError')?.addEventListener('DOMSubtreeModified', stop, { once: true });
+        window.setTimeout(stop, 90000);
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => { addQualityPanel(); initDropZone(); initWearVibesMotion(); bindScanAnimation(); });
+})();
+</script>
+
+
+  <style id="WearVibes-image-completion-styles">
+    /* Image completion: keep the fitting room visually rich before a personal result exists. */
+    .fit-ai-empty{width:100%;max-width:900px;min-height:440px;padding:clamp(22px,4vw,48px);display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,230px);align-items:center;gap:clamp(20px,4vw,54px);text-align:left;position:relative;z-index:2}
+    .fit-ai-empty-copy{max-width:340px}
+    .fit-ai-empty-copy .fit-ai-orbit{margin:0 0 26px}
+    .fit-ai-sample-kicker{display:block;font-size:9px;letter-spacing:.2em;color:rgba(255,255,255,.48);margin-bottom:12px}
+    .fit-ai-empty-copy strong{font:500 clamp(25px,3vw,36px)/1.12 var(--serif,Georgia,serif);letter-spacing:-.035em;margin:0}
+    .fit-ai-empty-copy p{font-size:13px;max-width:290px;margin-top:14px}
+    .fit-ai-sample-card{position:relative;margin:0;justify-self:end;width:min(100%,230px);height:330px;border-radius:130px 130px 18px 18px;overflow:hidden;border:1px solid rgba(255,255,255,.2);background:#25201b;box-shadow:0 28px 70px rgba(0,0,0,.35);transform:rotate(2deg)}
+    .fit-ai-sample-card:after{content:"";position:absolute;inset:45% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.82));pointer-events:none}
+    .fit-ai-sample-card img{width:100%;height:100%;object-fit:cover;object-position:center;transition:transform .7s ease}
+    .fit-ai-sample-card:hover img{transform:scale(1.05)}
+    .fit-ai-sample-card figcaption{position:absolute;left:15px;right:12px;bottom:15px;z-index:1;color:#fff;display:grid;gap:6px}
+    .fit-ai-sample-card figcaption span{font-size:8px;letter-spacing:.17em;color:rgba(255,255,255,.65)}
+    .fit-ai-sample-card figcaption b{font-size:10px;font-weight:500;line-height:1.35}
+    img.WearVibes-image-fallback{object-fit:cover;background:linear-gradient(145deg,#e9ded0,#b38d75 55%,#5a4037)}
+    @media(max-width:650px){.fit-ai-empty{grid-template-columns:1fr;gap:20px;text-align:center;min-height:0;padding:24px 16px}.fit-ai-empty-copy{margin:auto}.fit-ai-empty-copy .fit-ai-orbit{margin:0 auto 18px}.fit-ai-empty-copy p{margin:10px auto 0}.fit-ai-sample-card{width:150px;height:190px;justify-self:center;border-radius:90px 90px 14px 14px}.fit-ai-sample-card figcaption{left:8px;right:8px;bottom:9px}.fit-ai-sample-card figcaption b{font-size:9px}}
+    @media(prefers-reduced-motion:reduce){.fit-ai-sample-card img{transition:none}}
+  </style>
+  <script id="WearVibes-image-fallbacks">
+    (function(){
+      const fallbackByContext = [
+        {match:/lehenga|bridal|festive|rani pink|zari/i,url:'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&w=1000&q=85'},
+        {match:/saree|banarasi|drape|silk/i,url:'https://images.unsplash.com/photo-1583391733981-849840d0c4b1?auto=format&fit=crop&w=1000&q=85'},
+        {match:/suit|kurti|anarkali|sharara/i,url:'https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&w=1000&q=85'},
+        {match:/dress|coord|fashion|collection|style|sample/i,url:'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1000&q=85'}
+      ];
+      const generic='https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1000&q=85';
+      function repair(img){
+        if(!img || img.dataset.WearVibesFallbackDone) return;
+        const label=[img.alt||'',img.closest('[data-product-id]')?.textContent||'',img.closest('.product-card')?.textContent||''].join(' ');
+        const match=fallbackByContext.find(x=>x.match.test(label));
+        img.dataset.WearVibesFallbackDone='1';
+        img.addEventListener('error',function(){
+          if(img.dataset.WearVibesFallbackLevel==='2'){
+            img.classList.add('WearVibes-image-fallback');
+            img.removeAttribute('src');
+            img.alt=(img.alt||'Fashion image')+' — image unavailable';
+            return;
+          }
+          img.dataset.WearVibesFallbackLevel='2';
+          img.src=(match&&match.url!==img.src)?match.url:generic;
+        },{once:true});
+      }
+      document.querySelectorAll('img').forEach(repair);
+      const observer=new MutationObserver(records=>records.forEach(record=>record.addedNodes.forEach(node=>{
+        if(node.nodeType!==1)return;
+        if(node.matches&&node.matches('img'))repair(node);
+        node.querySelectorAll&&node.querySelectorAll('img').forEach(repair);
+      })));
+      observer.observe(document.documentElement,{childList:true,subtree:true});
+    })();
+  </script>
+
+</body>
+</html>
