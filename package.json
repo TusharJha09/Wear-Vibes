@@ -1,0 +1,23 @@
+{
+  "name": "wearvibes-ai",
+  "version": "2.0.0",
+  "private": true,
+  "description": "WearVibes AI fashion storefront with Replicate virtual try-on",
+  "main": "server.js",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "check": "node --check server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "file-type": "^21.0.0",
+    "helmet": "^8.1.0",
+    "image-size": "^2.0.2",
+    "multer": "^2.0.2",
+    "replicate": "^1.4.0"
+  }
+}
